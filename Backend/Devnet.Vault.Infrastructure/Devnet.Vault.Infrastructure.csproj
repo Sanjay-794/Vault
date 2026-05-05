@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Devnet.Vault.Application\Devnet.Vault.Application.csproj" />
     <ProjectReference Include="..\Devnet.Vault.Domain\Devnet.Vault.Domain.csproj" />
   </ItemGroup>
