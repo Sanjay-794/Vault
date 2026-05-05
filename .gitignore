@@ -1,0 +1,63 @@
+# Build
+bin/
+obj/
+out/
+publish/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDEs
+.idea/
+
+# VS Code
+.vscode/*
+!.vscode/
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Config
+appsettings.Local.json
+secrets.json
+
+# Frontend
+node_modules/
+wwwroot/dist/
+wwwroot/build/
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Databases
+*.mdf
+*.ldf
+*.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.tmp
+*.cache
+*.lscache
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user

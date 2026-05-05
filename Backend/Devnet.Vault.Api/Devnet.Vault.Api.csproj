@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+	<Version>1.0.0</Version>
+	<Deterministic>true</Deterministic>
+	<IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
+	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Devnet.Vault.Application\Devnet.Vault.Application.csproj" />
+    <ProjectReference Include="..\Devnet.Vault.Domain\Devnet.Vault.Domain.csproj" />
+    <ProjectReference Include="..\Devnet.Vault.Infrastructure\Devnet.Vault.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
