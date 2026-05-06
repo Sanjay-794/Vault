@@ -7,7 +7,7 @@ public static class Cors
     public static IServiceCollection AddCORSPolicy(this IServiceCollection _services, IConfiguration _config)
     {
         var allowedOrigins = _config
-            .GetSection(ConfigKeys.CORS_ALLOWED_ORIGINS)
+            .GetSection(ConfigKeys.CORS_ALLOWED_ORIGINS_KEY)
             .Get<string[]>() ?? [];
 
         _services.AddCors(options =>

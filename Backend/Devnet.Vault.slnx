@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
   <Folder Name="/Src/">
     <Project Path="Devnet.Vault.Api/Devnet.Vault.Api.csproj" />
     <Project Path="Devnet.Vault.Application/Devnet.Vault.Application.csproj" />

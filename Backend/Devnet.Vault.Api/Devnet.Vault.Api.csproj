@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	<Version>1.0.0</Version>
 	<Deterministic>true</Deterministic>
@@ -11,10 +12,11 @@
 	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
-  </ItemGroup>
+ <ItemGroup>
+ 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+ 	<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+ 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+ </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Controllers\" />
