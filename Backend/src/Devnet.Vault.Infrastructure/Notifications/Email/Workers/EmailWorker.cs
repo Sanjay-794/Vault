@@ -1,10 +1,11 @@
 ﻿using Devnet.Vault.Application.Notifications.Email.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Devnet.Vault.Infrastructure.Notifications.Email.Workers;
 
-public class EmailWorker(IEmailQueue _queue, IEmailSender _sender,
+public class EmailWorker(IEmailQueue _queue, IServiceScopeFactory _scopeFactory,
     ILogger<EmailWorker> _logger) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -16,7 +17,10 @@ public class EmailWorker(IEmailQueue _queue, IEmailSender _sender,
             try
             {
                 var email = await _queue.DequeueAsync(stoppingToken);
-                await _sender.SendAsync(email);
+                using var scope = _scopeFactory.CreateScope();
+                var sender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+
+                await sender.SendAsync(email);
             }
             catch (Exception ex)
             {
