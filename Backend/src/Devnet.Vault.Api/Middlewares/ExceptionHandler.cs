@@ -1,49 +1,61 @@
-﻿using System.Net;
+﻿using FluentValidation;
 using System.Text.Json;
 
 namespace Devnet.Vault.Api.Middlewares;
 
-public class ExceptionHandler(RequestDelegate _next, ILogger<ExceptionHandler> _logger)
+public class ExceptionHandler(RequestDelegate next, ILogger<ExceptionHandler> logger)
 {
-    private static readonly JsonSerializerOptions _jsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = false
-    };
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
-            context.Request.EnableBuffering();
-            await _next.Invoke(context);
-
+            await next(context);
         }
-        catch (Exception e)
+        catch (ValidationException ex)
         {
-            await HandleExceptionAsync(context, e);
+            logger.LogWarning(ex, "Validation failed");
+
+            await WriteResponse(context, StatusCodes.Status400BadRequest, "Validation failed",
+                ex.Errors.Select(x => new
+                {
+                    field = x.PropertyName,
+                    error = x.ErrorMessage
+                }));
+        }
+        catch (OperationCanceledException ex)
+        {
+            logger.LogWarning(ex, "Request cancelled");
+
+            await WriteResponse(context, StatusCodes.Status499ClientClosedRequest,
+                "Operation Cancelled by client", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Unhandled exception");
+
+            await WriteResponse(context, StatusCodes.Status500InternalServerError,
+                "An error occurred", ex.Message);
         }
     }
 
-    private async Task HandleExceptionAsync(HttpContext context, Exception e)
+    private static async Task WriteResponse(HttpContext context, int statusCode, string message, object error)
     {
-        try
+        if (context.Response.HasStarted)
+            return;
+
+        context.Response.Clear();
+
+        context.Response.StatusCode = statusCode;
+
+        context.Response.ContentType = "application/json";
+
+        var response = new
         {
-            _logger.LogError(e, "Unhandled exception occurred while processing {Path}", context.Request.Path);
-            if (!context.Response.HasStarted) // If response header not sent to client then rewrite the response
-            {
-                context.Response.Clear();
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                context.Response.ContentType = "application/json";
+            message,
+            error
+        };
 
-                var json = JsonSerializer.Serialize(e.Message, _jsonOptions);
-
-                await context.Response.WriteAsync(json);
-            }
-
-        }
-        catch (Exception failedExecptionHandler)
-        {
-            _logger.LogCritical(failedExecptionHandler, "Failed to handle exception for {Path}", context.Request.Path);
-        }
+        await context.Response.WriteAsync(
+            JsonSerializer.Serialize(response));
     }
 }

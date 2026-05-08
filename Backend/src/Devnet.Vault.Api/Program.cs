@@ -1,5 +1,6 @@
 
 using Devnet.Vault.Api.Extensions;
+using Devnet.Vault.Application;
 using Devnet.Vault.Infrastructure;
 
 namespace Devnet.Vault.Api;
@@ -11,6 +12,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddPresentation(builder.Configuration);
+        builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration);
 
         var app = builder.Build();

@@ -1,4 +1,5 @@
 ﻿using Devnet.Vault.Domain.Constants.AppKeys;
+using Devnet.Vault.Domain.Constants.AppSettings;
 using Devnet.Vault.Domain.Constants.Messages;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -29,7 +30,7 @@ public static class Auth
                     }
                     else
                     {
-                        context.Token = context.Request.Cookies["AccessToken"];
+                        context.Token = context.Request.Cookies[AppConstants.APP_ACCESS_TOKEN_NAME];
                     }
 
                     return Task.CompletedTask;

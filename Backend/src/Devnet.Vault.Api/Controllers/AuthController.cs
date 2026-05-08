@@ -1,5 +1,7 @@
 using Devnet.Vault.Application.Features.Auth.Commands;
 using Devnet.Vault.Application.Features.Auth.DTOs;
+using Devnet.Vault.Domain.Constants.AppSettings;
+using Devnet.Vault.Domain.Constants.Routes;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,15 +16,13 @@ namespace Devnet.Vault.Api.Controllers;
 public class AuthController(IMediator _mediator) : ControllerBase
 {
     /// <summary>
-    /// Request OTP for authentication (Step 1)
+    /// Request OTP for authentication
     /// </summary>
-    [HttpPost("request-otp")]
+    [HttpPost(ApiEndpoints.AuthApiEndpoints.REQUEST_AUTH_OTP_ENDPOINT)]
     [ProducesResponseType(typeof(RequestOtpResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RequestOtp(
-        [FromBody] RequestOtpRequest request,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> RequestOtp([FromBody] RequestOtpRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -35,23 +35,16 @@ public class AuthController(IMediator _mediator) : ControllerBase
         {
             return BadRequest(new { message = ex.Message });
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "An error occurred", error = ex.Message });
-        }
     }
 
     /// <summary>
-    /// Register or login user after OTP validation (Step 2)
+    /// Register or login user after OTP validation
     /// </summary>
-    [HttpPost("register-or-login")]
-    [HttpPost("login-with-otp")]
+    [HttpPost(ApiEndpoints.AuthApiEndpoints.LOGIN_WITH_OTP_ENDPOINT)]
     [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> LoginWithOtp(
-        [FromBody] RegisterOrLoginRequest request,
-        CancellationToken cancellationToken)
+    public async Task<IActionResult> LoginWithOtp([FromBody] RegisterOrLoginRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -69,7 +62,7 @@ public class AuthController(IMediator _mediator) : ControllerBase
             var response = await _mediator.Send(command, cancellationToken);
 
             // Set secure cookies for tokens
-            Response.Cookies.Append("AccessToken", response.AccessToken, new Microsoft.AspNetCore.Http.CookieOptions
+            Response.Cookies.Append(AppConstants.APP_ACCESS_TOKEN_NAME, response.AccessToken, new Microsoft.AspNetCore.Http.CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
@@ -77,12 +70,12 @@ public class AuthController(IMediator _mediator) : ControllerBase
                 Expires = DateTimeOffset.UtcNow.AddMinutes(response.ExpiryMinutes)
             });
 
-            Response.Cookies.Append("RefreshToken", response.RefreshToken, new Microsoft.AspNetCore.Http.CookieOptions
+            Response.Cookies.Append(AppConstants.APP_REFRESH_TOKEN_NAME, response.RefreshToken, new Microsoft.AspNetCore.Http.CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict,
-                Expires = DateTimeOffset.UtcNow.AddDays(7)
+                Expires = DateTimeOffset.UtcNow.AddDays(AppTimes.REFRESH_TOKEN_EXPIRY_TIME_IN_DAYS)
             });
 
             return Ok(response);
@@ -90,10 +83,6 @@ public class AuthController(IMediator _mediator) : ControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { message = ex.Message });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "An error occurred", error = ex.Message });
         }
     }
 }
