@@ -100,7 +100,6 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
         // Return authentication response
         return new AuthResponse
         {
-            UserId = user.UserId,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
             Name = user.Name,

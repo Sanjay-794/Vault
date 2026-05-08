@@ -6,4 +6,6 @@ public interface IAuthRepository
 {
     Task<UserDetails?> RegisterNewUserAsync(UserDetails userDetails, CancellationToken cancellationToken);
     Task<bool> SaveUserLoginDetailsAsync(UserLogins userLogins, CancellationToken cancellationToken);
+    Task<UserLogins?> GetUserLoginByRefreshTokenHashAsync(string refreshTokenHash, CancellationToken cancellationToken);
+    Task<bool> RevokeUserLoginAsync(long userLoginId, CancellationToken cancellationToken);
 }

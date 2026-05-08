@@ -5,7 +5,6 @@ namespace Devnet.Vault.Application.Features.Auth.DTOs;
 /// </summary>
 public record AuthResponse
 {
-    public long UserId { get; init; }
     public string? Email { get; init; }
     public string? PhoneNumber { get; init; }
     public string? Name { get; init; } = null!;
