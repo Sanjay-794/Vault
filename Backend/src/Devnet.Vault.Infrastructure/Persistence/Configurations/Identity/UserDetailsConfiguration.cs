@@ -17,7 +17,6 @@ public class UserDetailsConfiguration : IEntityTypeConfiguration<UserDetails>
             .ValueGeneratedOnAdd();
         // Properties
         builder.Property(x => x.Name)
-            .IsRequired()
             .HasMaxLength(200);
 
         builder.Property(x => x.Email)
@@ -41,11 +40,9 @@ public class UserDetailsConfiguration : IEntityTypeConfiguration<UserDetails>
         builder.HasIndex(x => x.PhoneNumber)
             .IsUnique();
 
-        builder.Property(x => x.RoleId)
-            .IsRequired();
+        builder.Property(x => x.RoleId);
 
-        builder.Property(x => x.CountryId)
-            .IsRequired();
+        builder.Property(x => x.CountryId);
 
         // Relationships
         builder.HasOne(x => x.Country)

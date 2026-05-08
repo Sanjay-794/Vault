@@ -49,8 +49,8 @@ public class EncryptionService(IOptions<EncryptionSettings> options) : IEncrypti
     private Aes CreateAes()
     {
         var aes = Aes.Create();
-        aes.Key = Encoding.UTF8.GetBytes(_settings.AesKey);
-        aes.IV = Encoding.UTF8.GetBytes(_settings.AesIV);
+        aes.Key = Convert.FromBase64String(_settings.AesKey);
+        aes.IV = Convert.FromBase64String(_settings.AesIV);
         return aes;
     }
 
@@ -101,5 +101,11 @@ public class EncryptionService(IOptions<EncryptionSettings> options) : IEncrypti
         }
 
         return new string(result);
+    }
+
+    public string Hash(string input)
+    {
+        var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
+        return Convert.ToBase64String(hashedBytes);
     }
 }

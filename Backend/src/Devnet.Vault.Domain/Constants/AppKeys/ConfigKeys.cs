@@ -19,6 +19,7 @@ public static class ConfigKeys
 
     public const string CONNECTION_STRINGS_KEY = "ConnectionStrings";
     public const string MYSQL_CONNECTION_STRINGS_KEY = "ConnectionStrings:MySqlConnection";
+    public const string REDIS_CONNECTION_STRINGS_KEY = "ConnectionStrings:RedisConnection";
 
     public const string ENCRYPTION_SETTINGS_KEY = "EncryptionSettings";
 }

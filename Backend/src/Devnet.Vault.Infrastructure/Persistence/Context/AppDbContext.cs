@@ -38,8 +38,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             if (typeof(AuditProperty).IsAssignableFrom(entityType.ClrType))
             {
                 modelBuilder.Entity(entityType.ClrType)
-                    .Property(nameof(AuditProperty.CreatedBy))
-                    .IsRequired();
+                    .Property(nameof(AuditProperty.CreatedBy));
 
                 modelBuilder.Entity(entityType.ClrType)
                     .Property(nameof(AuditProperty.CreatedDate))

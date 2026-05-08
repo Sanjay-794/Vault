@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Devnet.Vault.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentitySetup : Migration
+    public partial class DbSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,7 +28,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                     CountryCallingCode = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: true),
-                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -54,7 +54,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                     SubfeatureId = table.Column<int>(type: "int", nullable: true),
                     FeatureGroup = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -83,7 +83,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -102,7 +102,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                 {
                     RoleId = table.Column<int>(type: "int", nullable: false),
                     FeatureId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
@@ -133,19 +133,19 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                 {
                     UserId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                    Name = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PhoneNumber = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CountryId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    CountryId = table.Column<int>(type: "int", nullable: true),
+                    RoleId = table.Column<int>(type: "int", nullable: true),
                     LastLoginDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     IsDeactivated = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
                     DeactivatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     DeactivatedBy = table.Column<long>(type: "bigint", nullable: true),
-                    CreatedBy = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedBy = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),

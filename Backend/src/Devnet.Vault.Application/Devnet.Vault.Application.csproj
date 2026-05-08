@@ -12,11 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Auth\Commands\" />
     <Folder Include="Features\Auth\Handlers\" />
     <Folder Include="Features\Auth\DTOs\" />
-    <Folder Include="Features\Auth\Interfaces\Repositories\" />
     <Folder Include="Features\Auth\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+	<PackageReference Include="MediatR" />
   </ItemGroup>
 
 </Project>

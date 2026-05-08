@@ -30,7 +30,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                     b.Property<int>("FeatureId")
                         .HasColumnType("int");
 
-                    b.Property<long>("CreatedBy")
+                    b.Property<long?>("CreatedBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -63,10 +63,10 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("UserId"));
 
-                    b.Property<int>("CountryId")
+                    b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
-                    b.Property<long>("CreatedBy")
+                    b.Property<long?>("CreatedBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -97,7 +97,6 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
@@ -105,7 +104,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<long?>("UpdatedBy")
@@ -192,7 +191,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<long>("CreatedBy")
+                    b.Property<long?>("CreatedBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -234,7 +233,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("FeatureId"));
 
-                    b.Property<long>("CreatedBy")
+                    b.Property<long?>("CreatedBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -284,7 +283,7 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("RoleId"));
 
-                    b.Property<long>("CreatedBy")
+                    b.Property<long?>("CreatedBy")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
@@ -343,14 +342,12 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                     b.HasOne("Devnet.Vault.Domain.Entities.Masters.Countries", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Devnet.Vault.Domain.Entities.Masters.Roles", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Country");
 

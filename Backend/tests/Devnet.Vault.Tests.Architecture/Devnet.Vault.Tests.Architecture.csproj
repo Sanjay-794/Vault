@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Devnet.Vault.Api\Devnet.Vault.Api.csproj" />
+    <ProjectReference Include="..\..\src\Devnet.Vault.Api\Devnet.Vault.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

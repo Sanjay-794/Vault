@@ -13,12 +13,17 @@
   	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
   	<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+	<PackageReference Include="StackExchange.Redis" />
 	<PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Devnet.Vault.Application\Devnet.Vault.Application.csproj" />
     <ProjectReference Include="..\Devnet.Vault.Domain\Devnet.Vault.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
 </Project>
