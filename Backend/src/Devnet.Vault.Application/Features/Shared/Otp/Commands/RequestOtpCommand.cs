@@ -1,7 +1,7 @@
-using Devnet.Vault.Application.Features.Auth.DTOs;
+using Devnet.Vault.Application.Features.Shared.Otp.DTOs;
 using MediatR;
 
-namespace Devnet.Vault.Application.Features.Auth.Commands;
+namespace Devnet.Vault.Application.Features.Shared.Otp.Commands;
 
 /// <summary>
 /// Command to request OTP for authentication

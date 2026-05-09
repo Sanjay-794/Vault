@@ -1,7 +1,8 @@
 ﻿using Devnet.Vault.Application.Utilities;
+using Devnet.Vault.Domain.Constants.Messages;
 using FluentValidation;
 
-namespace Devnet.Vault.Application.Features.Auth.Commands;
+namespace Devnet.Vault.Application.Features.Shared.Otp.Commands;
 
 public class RequestOtpCommandValidator : AbstractValidator<RequestOtpCommand>
 {
@@ -9,9 +10,9 @@ public class RequestOtpCommandValidator : AbstractValidator<RequestOtpCommand>
     {
         RuleFor(x => x.Request.Identifier)
             .NotEmpty()
-            .WithMessage("Identifier is required")
+            .WithMessage(ValidationMessages.AuthValidationMessages.IDENTIFIER_REQUIRED)
             .Must(IsValidEmailOrPhone)
-            .WithMessage("Identifier must be a valid email or phone number");
+            .WithMessage(ValidationMessages.AuthValidationMessages.IDENTIFIER_INVALID);
     }
 
     private static bool IsValidEmailOrPhone(string identifier)

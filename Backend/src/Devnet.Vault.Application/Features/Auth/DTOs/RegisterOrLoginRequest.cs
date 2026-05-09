@@ -8,7 +8,7 @@ namespace Devnet.Vault.Application.Features.Auth.DTOs;
 public record RegisterOrLoginRequest
 {
     public required string Identifier { get; init; }
-    public required AuthType IdentifierType { get; init; } // "email" or "phone"
+    public required NotificationChannel ChannelType { get; init; } // "email" or "phone"
     public required string Otp { get; init; }
     public required string OtpCacheKey { get; init; }
     public int? CountryId { get; init; }

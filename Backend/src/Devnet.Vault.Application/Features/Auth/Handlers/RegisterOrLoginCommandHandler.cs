@@ -11,6 +11,7 @@ using Devnet.Vault.Domain.Entities.Identity;
 using Devnet.Vault.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Options;
+using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Application.Features.Auth.Handlers;
 
@@ -25,26 +26,26 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
         var req = request.Request;
 
         // Validate identifier type
-        var isEmail = req.IdentifierType == AuthType.Email;
-        var isPhone = req.IdentifierType == AuthType.Phone;
+        var isEmail = req.ChannelType == NotificationChannel.Email;
+        var isSMS = req.ChannelType == NotificationChannel.SMS;
 
-        if (!isEmail && !isPhone)
-            throw new InvalidOperationException("IdentifierType must be either 'email' or 'phone'");
+        if (!isEmail && !isSMS)
+            throw new InvalidOperationException(OtpValidationMessages.CHANNEL_INVALID);
 
-        var cacheKey = $"o:{req.IdentifierType}:{_encryptionService.Encrypt(req.Identifier)}";
+        var cacheKey = $"o:{req.ChannelType}:{_encryptionService.Encrypt(req.Identifier)}";
         if (cacheKey != req.OtpCacheKey)
-            throw new InvalidOperationException("Invalid Otp");
+            throw new InvalidOperationException(OtpValidationMessages.OTP_INVALID);
 
         // Validate OTP from Redis cache
         var isValidOtp = await _otpValidationService.ValidateAsync(req.OtpCacheKey, req.Otp);
         if (!isValidOtp)
-            throw new InvalidOperationException("Invalid or expired OTP");
+            throw new InvalidOperationException(OtpValidationMessages.OTP_INVALID);
 
         // Check if user exists
         UserDetails? user = null;
         if (isEmail)
             user = await _userRepository.GetUserDetailsByEmailAsync(req.Identifier, cancellationToken);
-        else if (isPhone)
+        else if (isSMS)
             user = await _userRepository.GetUserDetailsByPhoneNumberAsync(req.Identifier, cancellationToken);
 
         var isNewUser = user == null;
@@ -55,7 +56,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
             user = new UserDetails
             {
                 Email = isEmail ? req.Identifier : null,
-                PhoneNumber = isPhone ? req.Identifier : null,
+                PhoneNumber = isSMS ? req.Identifier : null,
                 CountryId = req.CountryId.HasValue ? req.CountryId.Value : null,
                 IsDeactivated = false,
                 CreatedBy = 0, // System user
@@ -63,7 +64,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
             };
 
             user = await _authRepository.RegisterNewUserAsync(user, cancellationToken)
-                ?? throw new InvalidOperationException("Failed to register user");
+                ?? throw new InvalidOperationException(AuthValidationMessages.REGISTRATION_FAILED);
         }
         else
         {
@@ -73,7 +74,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
             user?.UpdatedBy = user.UserId;
         }
         if (user == null)
-            throw new InvalidOperationException("User not found");
+            throw new InvalidOperationException(UserInfoMessages.USER_NOT_FOUND);
 
         // Generate JWT tokens
         var accessToken = _jwtService.GenerateAccessToken(user);
@@ -95,7 +96,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
 
         var loginSaved = await _authRepository.SaveUserLoginDetailsAsync(userLogin, cancellationToken);
         if (!loginSaved)
-            throw new InvalidOperationException("Failed to save login details");
+            throw new InvalidOperationException(AuthValidationMessages.LOGIN_DETAILS_SAVE_FAILED);
 
         // Return authentication response
         return new AuthResponse

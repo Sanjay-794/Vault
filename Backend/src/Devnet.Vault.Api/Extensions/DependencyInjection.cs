@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Devnet.Vault.Application.Features.Shared.Otp.Commands;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Devnet.Vault.Api.Extensions;
@@ -20,7 +21,7 @@ public static class DependencyInjection
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblies(
-                typeof(Devnet.Vault.Application.Features.Auth.Commands.RequestOtpCommand).Assembly);
+                typeof(RequestOtpCommand).Assembly);
         });
 
         services.AddAuthPolicy(configuration);

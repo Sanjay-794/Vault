@@ -1,19 +1,20 @@
-﻿using Devnet.Vault.Application.Features.Auth.Interfaces.Services;
+﻿using Devnet.Vault.Application.Features.Account.Interfaces.Repositories;
 using Devnet.Vault.Application.Features.Auth.Interfaces.Repositories;
-using Devnet.Vault.Application.Features.Account.Interfaces.Repositories;
+using Devnet.Vault.Application.Features.Auth.Interfaces.Services;
 using Devnet.Vault.Application.Features.Shared.Cache.Interfaces.Services;
 using Devnet.Vault.Application.Features.Shared.Otp.Interfaces.Services;
 using Devnet.Vault.Application.Notifications.Email.Interfaces;
 using Devnet.Vault.Application.Security.Encryption.Interfaces;
 using Devnet.Vault.Domain.Constants.AppKeys;
+using Devnet.Vault.Domain.Constants.Messages;
 using Devnet.Vault.Infrastructure.Cache.Services;
 using Devnet.Vault.Infrastructure.Notifications.Email.Queue;
 using Devnet.Vault.Infrastructure.Notifications.Email.Services;
 using Devnet.Vault.Infrastructure.Notifications.Email.Workers;
 using Devnet.Vault.Infrastructure.Otp.Services;
 using Devnet.Vault.Infrastructure.Persistence.Context;
-using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Authentication;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Account;
+using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Authentication;
 using Devnet.Vault.Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +50,7 @@ public static class DependencyInjection
         _services.AddSingleton<IConnectionMultiplexer>(sp =>
         {
             if (string.IsNullOrWhiteSpace(redisConnectionString))
-                throw new InvalidOperationException("Redis connection string is not configured.");
+                throw new InvalidOperationException(ExceptionMessages.REDIS_CONNECTION_KEY_NOT_FOUND);
 
             var options = ConfigurationOptions.Parse(redisConnectionString);
 

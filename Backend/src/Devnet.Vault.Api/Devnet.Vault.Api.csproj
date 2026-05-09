@@ -19,10 +19,6 @@
  </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Devnet.Vault.Application\Devnet.Vault.Application.csproj" />
     <ProjectReference Include="..\Devnet.Vault.Domain\Devnet.Vault.Domain.csproj" />
     <ProjectReference Include="..\Devnet.Vault.Infrastructure\Devnet.Vault.Infrastructure.csproj" />

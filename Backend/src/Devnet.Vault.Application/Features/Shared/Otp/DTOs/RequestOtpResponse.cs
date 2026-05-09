@@ -1,4 +1,4 @@
-namespace Devnet.Vault.Application.Features.Auth.DTOs;
+namespace Devnet.Vault.Application.Features.Shared.Otp.DTOs;
 
 /// <summary>
 /// DTO for OTP request response

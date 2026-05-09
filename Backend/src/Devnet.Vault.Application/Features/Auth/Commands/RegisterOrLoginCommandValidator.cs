@@ -1,7 +1,6 @@
 ﻿using Devnet.Vault.Application.Utilities;
+using Devnet.Vault.Domain.Constants.Messages;
 using FluentValidation;
-using PhoneNumbers;
-using System.Net.Mail;
 
 namespace Devnet.Vault.Application.Features.Auth.Commands;
 
@@ -12,18 +11,18 @@ public class RegisterOrLoginCommandValidator
     {
         RuleFor(x => x.Request.Identifier)
             .NotEmpty()
-            .WithMessage("Identifier is required")
+            .WithMessage(ValidationMessages.AuthValidationMessages.IDENTIFIER_REQUIRED)
             .Must(IsValidEmailOrPhone)
-            .WithMessage("Identifier must be a valid email or phone number");
+            .WithMessage(ValidationMessages.AuthValidationMessages.IDENTIFIER_INVALID);
 
         RuleFor(x => x.Request.OtpCacheKey)
             .NotEmpty()
-            .WithMessage("OtpCacheKey is required");
+            .WithMessage(ValidationMessages.AuthValidationMessages.OTP_CACHE_KEY_REQUIRED);
 
         RuleFor(x => x.Request.Otp)
             .NotEmpty()
             .Matches(@"^\d{4,6}$")
-            .WithMessage("OTP must be 4–6 digits");
+            .WithMessage(ValidationMessages.OtpValidationMessages.OTP_LENGTH_INVALID);
     }
 
     private static bool IsValidEmailOrPhone(string identifier)
@@ -36,5 +35,5 @@ public class RegisterOrLoginCommandValidator
         return Validators.IsValidEmail(identifier) || Validators.IsValidPhone(identifier);
     }
 
-    
+
 }

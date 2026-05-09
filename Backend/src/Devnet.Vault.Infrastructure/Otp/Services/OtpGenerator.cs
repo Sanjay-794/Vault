@@ -1,5 +1,6 @@
 using Devnet.Vault.Application.Features.Shared.Otp.Interfaces.Services;
 using System.Security.Cryptography;
+using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Infrastructure.Otp.Services;
 
@@ -9,7 +10,7 @@ public class OtpGenerator : IOtpGenerator
     {
         if (length <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(length), "OTP length must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(length), OtpValidationMessages.OTP_LENGTH_ZERO);
         }
 
         var digits = new char[length];

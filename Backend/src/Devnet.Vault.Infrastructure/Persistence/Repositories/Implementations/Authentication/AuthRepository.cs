@@ -2,6 +2,7 @@
 using Devnet.Vault.Domain.Entities.Identity;
 using Devnet.Vault.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Authentication;
 
@@ -21,7 +22,7 @@ public class AuthRepository(AppDbContext _dbContext) : IAuthRepository
         catch (Exception ex)
         {
             _dbContext.ChangeTracker.Clear(); // Clear the change tracker to prevent inconsistent state
-            throw new InvalidOperationException("Failed to register user", ex);
+            throw new InvalidOperationException(AuthValidationMessages.REGISTRATION_FAILED, ex);
         }
     }
 
@@ -39,7 +40,7 @@ public class AuthRepository(AppDbContext _dbContext) : IAuthRepository
         catch (Exception ex)
         {
             _dbContext.ChangeTracker.Clear(); // Clear the change tracker to prevent inconsistent state
-            throw new InvalidOperationException("Failed to save login details", ex);
+            throw new InvalidOperationException(AuthValidationMessages.LOGIN_DETAILS_SAVE_FAILED, ex);
         }
     }
 
@@ -56,7 +57,7 @@ public class AuthRepository(AppDbContext _dbContext) : IAuthRepository
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Failed to get user login", ex);
+            throw new InvalidOperationException(AuthValidationMessages.LOGIN_DETAILS_NOT_FOUND, ex);
         }
     }
 
@@ -78,7 +79,7 @@ public class AuthRepository(AppDbContext _dbContext) : IAuthRepository
         catch (Exception ex)
         {
             _dbContext.ChangeTracker.Clear();
-            throw new InvalidOperationException("Failed to revoke login", ex);
+            throw new InvalidOperationException(AuthValidationMessages.LOGIN_REVOKE_FAILED, ex);
         }
     }
 }

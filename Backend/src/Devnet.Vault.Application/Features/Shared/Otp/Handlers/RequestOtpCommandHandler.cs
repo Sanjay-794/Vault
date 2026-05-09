@@ -1,14 +1,16 @@
-using Devnet.Vault.Application.Features.Auth.Commands;
-using Devnet.Vault.Application.Features.Auth.DTOs;
 using Devnet.Vault.Application.Features.Shared.Cache.Interfaces.Services;
+using Devnet.Vault.Application.Features.Shared.Otp.Commands;
+using Devnet.Vault.Application.Features.Shared.Otp.DTOs;
+using Devnet.Vault.Application.Features.Shared.Otp.Helpers;
 using Devnet.Vault.Application.Features.Shared.Otp.Interfaces.Services;
 using Devnet.Vault.Application.Notifications.Email.Interfaces;
 using Devnet.Vault.Application.Notifications.Email.Models;
 using Devnet.Vault.Application.Security.Encryption.Interfaces;
 using Devnet.Vault.Domain.Enums;
 using MediatR;
+using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
-namespace Devnet.Vault.Application.Features.Auth.Handlers;
+namespace Devnet.Vault.Application.Features.Shared.Otp.Handlers;
 
 public class RequestOtpCommandHandler(IOtpGenerator _otpGenerator, ICacheService _cacheService, IEncryptionService _encryptionService,
     IEmailQueue _emailQueue) : IRequestHandler<RequestOtpCommand, RequestOtpResponse>
@@ -21,17 +23,17 @@ public class RequestOtpCommandHandler(IOtpGenerator _otpGenerator, ICacheService
         var req = request.Request;
 
         // Validate identifier type
-        var isEmail = req.IdentifierType == AuthType.Email;
-        var isPhone = req.IdentifierType == AuthType.Phone;
+        var isEmail = req.ChannelType == NotificationChannel.Email;
+        var isSMS = req.ChannelType == NotificationChannel.SMS;
 
-        if (!isEmail && !isPhone)
-            throw new InvalidOperationException("IdentifierType must be either 'email' or 'phone'");
+        if (!isEmail && !isSMS)
+            throw new InvalidOperationException(OtpValidationMessages.CHANNEL_INVALID);
 
         // Generate OTP
         var otp = _otpGenerator.Generate(OTP_LENGTH);
 
         // Create cache key
-        var cacheKey = $"o:{req.IdentifierType}:{_encryptionService.Encrypt(req.Identifier)}";
+        var cacheKey = $"o:{req.ChannelType}:{_encryptionService.Encrypt(req.Identifier)}";
 
         // Store OTP in Redis cache with expiry
         await _cacheService.SetAsync(
@@ -41,9 +43,9 @@ public class RequestOtpCommandHandler(IOtpGenerator _otpGenerator, ICacheService
 
         // Send OTP via email
         if (isEmail)
-            SendOtpByEmailAsync(req.Identifier, otp);
-        else if (isPhone)
-            throw new NotImplementedException("SMS functionality is under development"); // TODO: Implement SMS functionality
+            SendOtpByEmailAsync(req.Identifier, otp, req.Purpose);
+        else if (isSMS)
+            throw new NotImplementedException(OtpValidationMessages.SMS_UNDER_DEVELOPMENT); // TODO: Implement SMS functionality
 
         return new RequestOtpResponse
         {
@@ -54,21 +56,15 @@ public class RequestOtpCommandHandler(IOtpGenerator _otpGenerator, ICacheService
         };
     }
 
-    private void SendOtpByEmailAsync(string email, string otp)
+    private void SendOtpByEmailAsync(string email, string otp, OtpPurpose otpPurpose)
     {
-        var subject = "Your Authentication OTP";
-        var body = $@"
-            <html>
-                <body style='font-family: Arial, sans-serif;'>
-                    <h2>Authentication Code</h2>
-                    <p>Your One-Time Password (OTP) is:</p>
-                    <h1 style='color: #007bff; letter-spacing: 5px;'>{otp}</h1>
-                    <p>This code will expire in {OTP_EXPIRY_MINUTES} minutes.</p>
-                    <p>If you didn't request this code, please ignore this email.</p>
-                    <hr>
-                    <small style='color: #666;'>This is an automated message. Please do not reply.</small>
-                </body>
-            </html>";
+        (string subject, string body) = otpPurpose switch
+        {
+            OtpPurpose.Authentication =>
+                EmailDraft.GetAuthEmailBody(otp, OTP_EXPIRY_MINUTES),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(otpPurpose))
+        };
 
         var emailMessage = new EmailMessage
         {
