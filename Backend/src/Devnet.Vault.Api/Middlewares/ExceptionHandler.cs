@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Devnet.Vault.Domain.Constants.Messages;
+using FluentValidation;
 using System.Text.Json;
 
 namespace Devnet.Vault.Api.Middlewares;
@@ -13,9 +14,9 @@ public class ExceptionHandler(RequestDelegate next, ILogger<ExceptionHandler> lo
         }
         catch (ValidationException ex)
         {
-            logger.LogWarning(ex, "Validation failed");
+            logger.LogWarning(ex, ExceptionMessages.GENERIC_VALIDATION_ERROR);
 
-            await WriteResponse(context, StatusCodes.Status400BadRequest, "Validation failed",
+            await WriteResponse(context, StatusCodes.Status400BadRequest, ExceptionMessages.GENERIC_VALIDATION_ERROR,
                 ex.Errors.Select(x => new
                 {
                     field = x.PropertyName,
@@ -24,17 +25,17 @@ public class ExceptionHandler(RequestDelegate next, ILogger<ExceptionHandler> lo
         }
         catch (OperationCanceledException ex)
         {
-            logger.LogWarning(ex, "Request cancelled");
+            logger.LogWarning(ex, ExceptionMessages.OPERATION_CANCELLED);
 
             await WriteResponse(context, StatusCodes.Status499ClientClosedRequest,
-                "Operation Cancelled by client", ex.Message);
+                ExceptionMessages.OPERATION_CANCELLED, ex.Message);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception");
+            logger.LogError(ex, ExceptionMessages.GENERIC_ERROR);
 
             await WriteResponse(context, StatusCodes.Status500InternalServerError,
-                "An error occurred", ex.Message);
+                ExceptionMessages.GENERIC_ERROR, ex.Message);
         }
     }
 
