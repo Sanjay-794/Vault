@@ -32,7 +32,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
         if (!isEmail && !isSMS)
             throw new InvalidOperationException(OtpValidationMessages.CHANNEL_INVALID);
 
-        var cacheKey = $"o:{req.ChannelType}:{_encryptionService.Encrypt(req.Identifier)}";
+        var cacheKey = $"o:{req.ChannelType}:{_encryptionService.Encrypt(req.Identifier)}:{OtpPurpose.Authentication}";
         if (cacheKey != req.OtpCacheKey)
             throw new InvalidOperationException(OtpValidationMessages.OTP_INVALID);
 
@@ -51,7 +51,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
         var isNewUser = user == null;
 
         // Register new user if doesn't exist
-        if (isNewUser)
+        if (user == null)
         {
             user = new UserDetails
             {
@@ -68,13 +68,13 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
         }
         else
         {
+            if (user.IsDeactivated && user.DeactivatedAt - DateTime.UtcNow < TimeSpan.FromDays(AppTimes.ACCOUNT_DEACTIVATION_PERIOD_IN_DAYS))
+                throw new InvalidOperationException(AuthValidationMessages.ACCOUNT_DEACTIVATED);
             // Update last login date for existing user
-            user?.LastLoginDate = DateTime.UtcNow;
-            user?.UpdatedDate = DateTime.UtcNow;
-            user?.UpdatedBy = user.UserId;
+            user.LastLoginDate = DateTime.UtcNow;
+            user.UpdatedDate = DateTime.UtcNow;
+            user.UpdatedBy = user.UserId;
         }
-        if (user == null)
-            throw new InvalidOperationException(UserInfoMessages.USER_NOT_FOUND);
 
         // Generate JWT tokens
         var accessToken = _jwtService.GenerateAccessToken(user);

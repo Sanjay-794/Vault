@@ -21,6 +21,7 @@
     <PackageReference Include="FluentValidation" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
     <PackageReference Include="libphonenumber-csharp" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" />
 	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
 	<PackageReference Include="MediatR" />
   </ItemGroup>

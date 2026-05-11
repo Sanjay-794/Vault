@@ -45,6 +45,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     .IsRequired();
 
                 modelBuilder.Entity(entityType.ClrType)
+                    .Property(nameof(AuditProperty.IsDeleted))
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                modelBuilder.Entity(entityType.ClrType)
                     .Property(nameof(AuditProperty.UpdatedBy));
 
                 modelBuilder.Entity(entityType.ClrType)

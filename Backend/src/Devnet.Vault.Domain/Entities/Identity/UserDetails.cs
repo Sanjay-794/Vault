@@ -11,6 +11,7 @@ public class UserDetails : AuditProperty
     public string? PhoneNumber { get; set; }
     public int? CountryId { get; set; } // Related to Countries.CountryId
     public int? RoleId { get; set; } // Related to Roles.RoleId
+    public string? ProfileUrl { get; set; }
     public DateTime? LastLoginDate { get; set; }
     public bool IsDeactivated { get; set; }
     public DateTime? DeactivatedAt { get; set; }

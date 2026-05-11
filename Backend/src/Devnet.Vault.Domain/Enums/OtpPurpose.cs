@@ -3,5 +3,6 @@
 public enum OtpPurpose
 {
     Authentication = 1,
-    PasswordReset = 2
+    AccountDeactivation = 3,
+    AccountDeletion = 4
 }

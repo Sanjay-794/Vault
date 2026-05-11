@@ -33,7 +33,7 @@ public class RequestOtpCommandHandler(IOtpGenerator _otpGenerator, ICacheService
         var otp = _otpGenerator.Generate(OTP_LENGTH);
 
         // Create cache key
-        var cacheKey = $"o:{req.ChannelType}:{_encryptionService.Encrypt(req.Identifier)}";
+        var cacheKey = $"o:{req.ChannelType}:{_encryptionService.Encrypt(req.Identifier)}:{req.Purpose}";
 
         // Store OTP in Redis cache with expiry
         await _cacheService.SetAsync(
@@ -62,6 +62,12 @@ public class RequestOtpCommandHandler(IOtpGenerator _otpGenerator, ICacheService
         {
             OtpPurpose.Authentication =>
                 EmailDraft.GetAuthEmailBody(otp, OTP_EXPIRY_MINUTES),
+
+            OtpPurpose.AccountDeactivation =>
+                EmailDraft.GetAccountDeactivationEmailBody(otp, OTP_EXPIRY_MINUTES),
+
+            OtpPurpose.AccountDeletion =>
+                EmailDraft.GetAccountDeletionEmailBody(otp, OTP_EXPIRY_MINUTES),
 
             _ => throw new ArgumentOutOfRangeException(nameof(otpPurpose))
         };

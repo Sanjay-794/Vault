@@ -7,4 +7,5 @@ public static class ExceptionMessages
     public const string JWT_SECRET_KEY_NOT_FOUND = "Issuer Key Not Found";
     public const string REDIS_CONNECTION_KEY_NOT_FOUND = "Redis connection string is not configured";
     public const string OPERATION_CANCELLED = "Operation Cancelled by client";
+    public const string GENERIC_NULL_ERROR = "Unable to get request value";
 }

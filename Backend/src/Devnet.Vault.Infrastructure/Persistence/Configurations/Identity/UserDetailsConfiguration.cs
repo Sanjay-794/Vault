@@ -34,11 +34,14 @@ public class UserDetailsConfiguration : IEntityTypeConfiguration<UserDetails>
         builder.Property(x => x.DeactivatedAt);
 
         // Indexes 
-        builder.HasIndex(x => x.Email)
-            .IsUnique();
+        builder.HasIndex(u => new { u.Email, u.IsDeleted })
+        .IsUnique();
 
-        builder.HasIndex(x => x.PhoneNumber)
-            .IsUnique();
+        builder.HasIndex(u => new { u.PhoneNumber, u.IsDeleted })
+        .IsUnique();
+
+        builder.HasIndex(u => new { u.UserId, u.IsDeleted })
+        .IsUnique();
 
         builder.Property(x => x.RoleId);
 
