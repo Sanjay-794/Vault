@@ -25,6 +25,9 @@ public class UserDetailsConfiguration : IEntityTypeConfiguration<UserDetails>
         builder.Property(x => x.PhoneNumber)
             .HasMaxLength(20);
 
+        builder.Property(x => x.ProfileUrl)
+            .HasMaxLength(500);
+
         builder.Property(x => x.IsDeactivated)
             .IsRequired()
             .HasDefaultValue(false);

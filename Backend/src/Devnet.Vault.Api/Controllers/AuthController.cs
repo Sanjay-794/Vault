@@ -121,8 +121,6 @@ public class AuthController(IMediator _mediator) : ControllerBase
 
             if (userId <= 0)
                 return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
-            var userIdClaim =
-                User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!Request.Cookies.TryGetValue(AppConstants.APP_REFRESH_TOKEN_NAME, out var refreshToken) || string.IsNullOrWhiteSpace(refreshToken))
             {
