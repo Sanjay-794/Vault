@@ -8,6 +8,7 @@ public interface IUserRepository
     public Task<UserDetails?> GetUserDetailsByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
     public Task<UserDetails?> GetUserDetailsByUserIdAsync(long userId, CancellationToken cancellationToken);
     Task<bool> UpdateUserDetailsAsync(long userId, long updatedBy, string? profileUrl, string? name, CancellationToken cancellationToken);
+    Task<bool> UpdateUserContactDetailsAsync(long userId, long updatedBy, string? email, string? phoneNumber, int? countryId, CancellationToken cancellationToken);
     Task<bool> DeactivateUserAsync(long userId, long deactivatedBy, CancellationToken cancellationToken);
     Task<bool> DeleteUserAsync(long userId, long deletedBy, CancellationToken cancellationToken);
 

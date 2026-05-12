@@ -45,6 +45,11 @@ public static class ValidationMessages
     public static class ProfileMessages
     {
         public const string PROFILE_UPDATE_FAILED = "Failed to update your profile";
+        public const string EMAIL_ALREADY_IN_USE = "Email is already in use";
+        public const string PHONE_NUMBER_ALREADY_IN_USE = "Phone number is already in use";
+        public const string INVALID_EMAIL_ADDRESS = "Email address is invalid";
+        public const string INVALID_PHONE_NUMBER = "Phone number is invalid";
+        public const string INVALID_COUNTRY_CODE = "Country code is invalid";
     }
 
 

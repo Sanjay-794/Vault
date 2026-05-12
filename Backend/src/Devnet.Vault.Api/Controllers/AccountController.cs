@@ -69,6 +69,126 @@ public class AccountController(IMediator _mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Request OTP to update current user's email address
+    /// </summary>
+    [HttpPost(AccountApiEndpoints.REQUEST_UPDATE_EMAIL_OTP_ENDPOINT)]
+    [ProducesResponseType(typeof(RequestOtpResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> RequestUpdateEmailOtp([FromBody] RequestUpdateEmailOtpRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = HttpContext.GetUserId();
+            if (userId <= 0)
+                return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
+
+            var userDetails = await _mediator.Send(new GetProfileDetailsQuery(userId), cancellationToken);
+            if (userDetails == null)
+                return NotFound(UserInfoMessages.USER_NOT_FOUND);
+
+            var otpRequest = new RequestOtpRequest
+            {
+                Identifier = userDetails.Email ?? throw new InvalidOperationException(ProfileMessages.INVALID_EMAIL_ADDRESS),
+                ChannelType = NotificationChannel.Email,
+                Purpose = OtpPurpose.Authentication
+            };
+
+            var response = await _mediator.Send(new RequestOtpCommand(otpRequest), cancellationToken);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Update current user's email address
+    /// </summary>
+    [HttpPut(AccountApiEndpoints.UPDATE_EMAIL_ENDPOINT)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdateEmailAddress([FromBody] UpdateEmailAddressRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = HttpContext.GetUserId();
+            if (userId <= 0)
+                return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
+
+            var response = await _mediator.Send(new UpdateUserEmailAddressCommand(request, userId, userId), cancellationToken);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Request OTP to update current user's phone number
+    /// </summary>
+    [HttpPost(AccountApiEndpoints.REQUEST_UPDATE_PHONE_OTP_ENDPOINT)]
+    [ProducesResponseType(typeof(RequestOtpResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> RequestUpdatePhoneNumberOtp([FromBody] RequestUpdatePhoneNumberOtpRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = HttpContext.GetUserId();
+            if (userId <= 0)
+                return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
+            if (request.ChannelType == NotificationChannel.Email)
+                return BadRequest(new { message = OtpValidationMessages.CHANNEL_INVALID });
+
+            var userDetails = await _mediator.Send(new GetProfileDetailsQuery(userId), cancellationToken);
+            if (userDetails == null)
+                return NotFound(UserInfoMessages.USER_NOT_FOUND);
+
+            var otpRequest = new RequestOtpRequest
+            {
+                Identifier = userDetails.PhoneNumber ?? throw new InvalidOperationException(ProfileMessages.INVALID_PHONE_NUMBER),
+                ChannelType = request.ChannelType,
+                Purpose = OtpPurpose.Authentication
+            };
+
+            var response = await _mediator.Send(new RequestOtpCommand(otpRequest), cancellationToken);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Update current user's phone number
+    /// </summary>
+    [HttpPut(AccountApiEndpoints.UPDATE_PHONE_ENDPOINT)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> UpdatePhoneNumber([FromBody] UpdatePhoneNumberRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userId = HttpContext.GetUserId();
+            if (userId <= 0)
+                return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
+
+            var response = await _mediator.Send(new UpdateUserPhoneNumberCommand(request, userId, userId), cancellationToken);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Request OTP for account deactivation
     /// </summary>
     [HttpPost(AccountApiEndpoints.DEACTIVATE_OTP_REQUEST_ENDPOINT)]

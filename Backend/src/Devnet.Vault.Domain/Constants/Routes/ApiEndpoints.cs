@@ -14,6 +14,10 @@ public static class ApiEndpoints
     {
         public const string USER_PROFILE_ENDPOINT = "get-profile";
         public const string USER_PROFILE_UPDATE_ENDPOINT = "update-profile";
+        public const string REQUEST_UPDATE_EMAIL_OTP_ENDPOINT = "update-email/request-otp";
+        public const string UPDATE_EMAIL_ENDPOINT = "update-email";
+        public const string REQUEST_UPDATE_PHONE_OTP_ENDPOINT = "update-phone/request-otp";
+        public const string UPDATE_PHONE_ENDPOINT = "update-phone";
         public const string DEACTIVATE_OTP_REQUEST_ENDPOINT = "deactivate-account/request-otp";
         public const string DEACTIVATE_ACCOUNT_ENDPOINT = "deactivate-account";
         public const string DELETE_ACCOUNT_OTP_REQUEST_ENDPOINT = "delete-account/request-otp";

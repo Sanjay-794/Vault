@@ -39,6 +39,19 @@ public class UserRepository(AppDbContext _dbContext) : IUserRepository
         return result > 0;
     }
 
+    public async Task<bool> UpdateUserContactDetailsAsync(long userId, long updatedBy, string? email, string? phoneNumber, int? countryId, CancellationToken cancellationToken)
+    {
+        var result = await _dbContext.Users.Where(u => u.UserId == userId && !u.IsDeleted).ExecuteUpdateAsync(setters => setters
+                    .SetProperty(u => u.Email, u => email ?? u.Email)
+                    .SetProperty(u => u.PhoneNumber, u => phoneNumber ?? u.PhoneNumber)
+                    .SetProperty(u => u.CountryId, u => countryId ?? u.CountryId)
+                    .SetProperty(u => u.UpdatedBy, u => updatedBy)
+                    .SetProperty(u => u.UpdatedDate, u => DateTime.UtcNow),
+            cancellationToken);
+
+        return result > 0;
+    }
+
     public async Task<bool> DeactivateUserAsync(long userId, long deactivatedBy, CancellationToken cancellationToken)
     {
         var utcNow = DateTime.UtcNow;
