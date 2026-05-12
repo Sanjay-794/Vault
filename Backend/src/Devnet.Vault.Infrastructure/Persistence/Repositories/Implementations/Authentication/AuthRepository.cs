@@ -31,14 +31,25 @@ public class AuthRepository(AppDbContext _dbContext) : IAuthRepository
     /// </summary>
     public async Task<bool> SaveUserLoginDetailsAsync(UserLogins userLogins, CancellationToken cancellationToken)
     {
+        using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
         try
         {
             _dbContext.UserLogins.Add(userLogins);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return true;
+            _dbContext.Users.Where(u => u.UserId == userLogins.UserId)
+                .ExecuteUpdate(u => u.SetProperty(p => p.LastLoginDate, DateTime.UtcNow)
+                .SetProperty(U => U.UpdatedDate, DateTime.UtcNow)
+                .SetProperty(U => U.UpdatedBy, userLogins.UserId));
+            var rowsAffected = await _dbContext.SaveChangesAsync(cancellationToken);
+            if (rowsAffected > 0)
+                await transaction.CommitAsync(cancellationToken);
+            else
+                await transaction.RollbackAsync(cancellationToken);
+            return rowsAffected > 0;
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync(cancellationToken);
             _dbContext.ChangeTracker.Clear(); // Clear the change tracker to prevent inconsistent state
             throw new InvalidOperationException(AuthValidationMessages.LOGIN_DETAILS_SAVE_FAILED, ex);
         }

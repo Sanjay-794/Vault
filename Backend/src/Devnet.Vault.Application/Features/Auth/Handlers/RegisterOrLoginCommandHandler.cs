@@ -68,12 +68,11 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
         }
         else
         {
-            if (user.IsDeactivated && user.DeactivatedAt - DateTime.UtcNow < TimeSpan.FromDays(AppTimes.ACCOUNT_DEACTIVATION_PERIOD_IN_DAYS))
-                throw new InvalidOperationException(AuthValidationMessages.ACCOUNT_DEACTIVATED);
-            // Update last login date for existing user
-            user.LastLoginDate = DateTime.UtcNow;
-            user.UpdatedDate = DateTime.UtcNow;
-            user.UpdatedBy = user.UserId;
+            if (user.IsDeactivated && user.DeactivatedAt - DateTime.UtcNow > TimeSpan.FromDays(AppTimes.ACCOUNT_DEACTIVATION_PERIOD_IN_DAYS))
+            {
+                await _userRepository.DeleteUserAsync(user.UserId, user.UserId, cancellationToken);
+                throw new InvalidOperationException(AuthValidationMessages.ACCOUNT_DELETED);
+            }
         }
 
         // Generate JWT tokens

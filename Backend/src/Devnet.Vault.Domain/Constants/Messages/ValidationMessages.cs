@@ -17,7 +17,8 @@ public static class ValidationMessages
 
         public const string OTP_IDENTIFIER_REQUIRED = "Identifier and OTP are required";
         public const string OTP_REFRESH_TOKEN_REQUIRED = "Refresh token is required";
-        public const string ACCOUNT_DEACTIVATED = "Account is deactive";
+        public const string ACCOUNT_DEACTIVATED = "Account is deactivated";
+        public const string ACCOUNT_DELETED = "Account is deleted";
     }
 
     public static class OtpValidationMessages
