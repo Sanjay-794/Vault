@@ -22,4 +22,5 @@ public static class ConfigKeys
     public const string REDIS_CONNECTION_STRINGS_KEY = "ConnectionStrings:RedisConnection";
 
     public const string ENCRYPTION_SETTINGS_KEY = "EncryptionSettings";
+    public const string R2_SETTINGS_KEY = "CloudFareR2Settings";
 }

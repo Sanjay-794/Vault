@@ -1,6 +1,8 @@
 ﻿using Devnet.Vault.Domain.Common;
+using Devnet.Vault.Domain.Entities.Groups;
 using Devnet.Vault.Domain.Entities.Identity;
 using Devnet.Vault.Domain.Entities.Masters;
+using Devnet.Vault.Domain.Entities.Vault;
 using Microsoft.EntityFrameworkCore;
 
 namespace Devnet.Vault.Infrastructure.Persistence.Context;
@@ -16,11 +18,19 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Roles> Roles => Set<Roles>();
     public DbSet<RoleFeatures> RoleFeatures => Set<RoleFeatures>();
 
+
     // =========================
     // DbSets (Masters)
     // =========================
     public DbSet<Countries> Countries => Set<Countries>();
     public DbSet<Features> Features => Set<Features>();
+
+    /// <summary>
+    /// DbSets (Vault)
+    /// </summary>
+    public DbSet<GroupDetails> GroupDetails => Set<GroupDetails>();
+    public DbSet<VaultFiles> VaultFiles => Set<VaultFiles>();
+    public DbSet<VaultEntries> VaultEntries => Set<VaultEntries>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

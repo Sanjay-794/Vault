@@ -1,7 +1,10 @@
-﻿using Devnet.Vault.Application.Features.Account.Interfaces.Repositories;
+﻿using Amazon.S3;
+using Devnet.Vault.Application.Configurations;
+using Devnet.Vault.Application.Features.Account.Interfaces.Repositories;
 using Devnet.Vault.Application.Features.Auth.Interfaces.Repositories;
 using Devnet.Vault.Application.Features.Auth.Interfaces.Services;
 using Devnet.Vault.Application.Features.Shared.Cache.Interfaces.Services;
+using Devnet.Vault.Application.Features.Shared.FileUpload.Interfaces;
 using Devnet.Vault.Application.Features.Shared.Otp.Interfaces.Services;
 using Devnet.Vault.Application.Notifications.Email.Interfaces;
 using Devnet.Vault.Application.Security.Encryption.Interfaces;
@@ -16,9 +19,13 @@ using Devnet.Vault.Infrastructure.Persistence.Context;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Account;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Authentication;
 using Devnet.Vault.Infrastructure.Security;
+using Devnet.Vault.Infrastructure.Storage.CloudFareR2.Queue;
+using Devnet.Vault.Infrastructure.Storage.CloudFareR2.Services;
+using Devnet.Vault.Infrastructure.Storage.CloudFareR2.Workers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 namespace Devnet.Vault.Infrastructure;
@@ -43,9 +50,31 @@ public static class DependencyInjection
         _services.AddScoped<IEmailSender, SmtpEmailSender>();
 
         _services.AddHostedService<EmailWorker>();
+        _services.AddHostedService<FileUploadWorker>();
 
         _services.AddScoped<IEncryptionService, EncryptionService>();
         _services.AddScoped<IJwtService, JwtService>();
+
+        _services.AddSingleton<AmazonS3Client>(provider =>
+        {
+            var settings = provider
+                .GetRequiredService<IOptions<CloudFareR2Settings>>()
+                .Value;
+
+            var config = new AmazonS3Config
+            {
+                ServiceURL = settings.ServiceUrl,
+
+                ForcePathStyle = true
+            };
+
+            return new AmazonS3Client(
+                settings.AccessKeyId,
+                settings.SecretAccessKey,
+                config);
+        });
+        _services.AddSingleton<IFileUploadQueue, InMemoryFileUploadQueue>();
+        _services.AddScoped<IR2FileUploadService, R2FileUploadService>();
 
         _services.AddSingleton<IConnectionMultiplexer>(sp =>
         {

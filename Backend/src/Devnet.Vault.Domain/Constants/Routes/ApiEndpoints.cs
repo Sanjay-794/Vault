@@ -22,6 +22,12 @@ public static class ApiEndpoints
         public const string DEACTIVATE_ACCOUNT_ENDPOINT = "deactivate-account";
         public const string DELETE_ACCOUNT_OTP_REQUEST_ENDPOINT = "delete-account/request-otp";
         public const string DELETE_ACCOUNT_ENDPOINT = "delete-account";
+    }
 
+    public static class UploadApiEndpoints
+    {
+        public const string UPLOAD_FILES_ENDPOINT = "upload-files";
+        public const string UPLOAD_STATUS_ENDPOINT = "upload-status";
+        public const string UPLOAD_STATUS_BATCH_ENDPOINT = "upload-status/batch";
     }
 }
