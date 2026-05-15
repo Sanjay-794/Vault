@@ -32,7 +32,15 @@ public class GroupRepository(AppDbContext _dbContext)
     public async Task<GroupDetails?> ReuseDeletedGroupName(GroupDetails group)
     {
         var existingGroup = await _dbContext.GroupDetails
-            .Where(g => g.IsDeleted).OrderBy(x => x.GroupId).FirstOrDefaultAsync();
+            .Where(g => g.IsDeleted)
+            .OrderByDescending(g =>
+                g.ParentGroupId == group.ParentGroupId &&
+                g.OwnerId == group.OwnerId)
+            .ThenByDescending(g =>
+                g.OwnerId == group.OwnerId)
+            .ThenBy(g => g.GroupId)
+            .FirstOrDefaultAsync();
+
         if (existingGroup != null)
         {
             existingGroup.Name = group.Name;
@@ -41,14 +49,17 @@ public class GroupRepository(AppDbContext _dbContext)
             existingGroup.IsFavourite = group.IsFavourite;
             existingGroup.MetadataJson = group.MetadataJson;
             existingGroup.GroupType = group.GroupType;
+
             existingGroup.IsDeleted = false;
             existingGroup.UpdatedDate = DateTime.UtcNow;
             existingGroup.UpdatedBy = group.CreatedBy;
+
             var changes = await _dbContext.SaveChangesAsync();
 
             if (changes > 0)
                 return existingGroup;
         }
+
         return null;
     }
 
