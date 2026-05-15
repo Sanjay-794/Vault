@@ -17,6 +17,7 @@ using Devnet.Vault.Infrastructure.Notifications.Email.Workers;
 using Devnet.Vault.Infrastructure.Otp.Services;
 using Devnet.Vault.Infrastructure.Persistence.Context;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Account;
+using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Groups;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Authentication;
 using Devnet.Vault.Infrastructure.Security;
 using Devnet.Vault.Infrastructure.Storage.CloudFareR2.Queue;
@@ -96,6 +97,7 @@ public static class DependencyInjection
         // Register Auth and Account Repositories
         _services.AddScoped<IAuthRepository, AuthRepository>();
         _services.AddScoped<IUserRepository, UserRepository>();
+        _services.AddScoped<Devnet.Vault.Application.Features.Groups.Interfaces.Repositories.IGroupRepository, GroupRepository>();
 
         return _services;
     }

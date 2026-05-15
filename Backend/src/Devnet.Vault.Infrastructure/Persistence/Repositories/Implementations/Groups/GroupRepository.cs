@@ -1,11 +1,12 @@
-﻿using Devnet.Vault.Domain.Entities.Groups;
+﻿using Devnet.Vault.Application.Features.Groups.Interfaces.Repositories;
+using Devnet.Vault.Domain.Entities.Groups;
 using Devnet.Vault.Domain.Enums;
 using Devnet.Vault.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Groups;
 
-public class GroupRepository(AppDbContext _dbContext)
+public class GroupRepository(AppDbContext _dbContext) : IGroupRepository
 {
     public async Task<bool> CreateNewGroup(GroupDetails group)
     {
@@ -63,9 +64,9 @@ public class GroupRepository(AppDbContext _dbContext)
         return null;
     }
 
-    public async Task<bool> UpdateGroupName(string groupName, long groupId, long updatedBy)
+    public async Task<bool> UpdateGroupName(string groupName, long groupId, long ownerId, long updatedBy)
     {
-        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && !g.IsDeleted)
+        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted)
                .ExecuteUpdateAsync(X => X.SetProperty(g => g.Name, groupName)
                .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
                .SetProperty(g => g.UpdatedBy, updatedBy)
@@ -73,9 +74,9 @@ public class GroupRepository(AppDbContext _dbContext)
         return changes > 0;
     }
 
-    public async Task<bool> UpdateGroupFavouriteStatus(bool isFavourite, long groupId, long updatedBy)
+    public async Task<bool> UpdateGroupFavouriteStatus(bool isFavourite, long groupId, long ownerId, long updatedBy)
     {
-        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && !g.IsDeleted)
+        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted)
                .ExecuteUpdateAsync(X => X.SetProperty(g => g.IsFavourite, isFavourite)
                .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
                .SetProperty(g => g.UpdatedBy, updatedBy)
@@ -83,9 +84,16 @@ public class GroupRepository(AppDbContext _dbContext)
         return changes > 0;
     }
 
-    public async Task<bool> UpdateGroupParent(long parentGroupId, long groupId, long updatedBy)
+    public async Task<bool> UpdateGroupParent(long parentGroupId, long groupId, long ownerId, long updatedBy)
     {
-        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && !g.IsDeleted)
+        // Prevent circular reference by ensuring the new parent group is not a child of the current group
+        var isCircularReference = await _dbContext.GroupDetails
+            .Where(g => g.GroupId == parentGroupId && g.OwnerId == ownerId && !g.IsDeleted)
+            .SelectMany(g => g.ChildGroups)
+            .AnyAsync(cg => cg.GroupId == groupId);
+        if (isCircularReference)
+            return false;
+        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted)
                .ExecuteUpdateAsync(X => X.SetProperty(g => g.ParentGroupId, parentGroupId)
                .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
                .SetProperty(g => g.UpdatedBy, updatedBy)
@@ -93,10 +101,20 @@ public class GroupRepository(AppDbContext _dbContext)
         return changes > 0;
     }
 
-    public async Task<bool> DeleteGroup(long groupId, long updatedBy)
+    public async Task<bool> UpdateGroupMetadata(long groupId, string metadataJson, long ownerId, long updatedBy)
+    {
+        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted)
+               .ExecuteUpdateAsync(X => X.SetProperty(g => g.MetadataJson, metadataJson)
+               .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
+               .SetProperty(g => g.UpdatedBy, updatedBy)
+               );
+        return changes > 0;
+    }
+
+    public async Task<bool> DeleteGroup(long groupId, long ownerId, long updatedBy)
     {
         // Only allow deletion if there are no vault items or child groups inside this group
-        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && !g.IsDeleted
+        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted
         && g.VaultEntries.Any() == false && g.VaultFiles.Any() == false && g.ChildGroups.Any() == false)
                .ExecuteUpdateAsync(X => X.SetProperty(g => g.IsDeleted, true)
                .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)

@@ -30,4 +30,16 @@ public static class ApiEndpoints
         public const string UPLOAD_STATUS_ENDPOINT = "upload-status";
         public const string UPLOAD_STATUS_BATCH_ENDPOINT = "upload-status/batch";
     }
+
+    public static class GroupApiEndpoints
+    {
+        public const string CREATE = "create";
+        public const string UPDATE_NAME = "update-name";
+        public const string UPDATE_FAVOURITE = "update-favourite";
+        public const string UPDATE_PARENT = "update-parent";
+        public const string DELETE_GROUP = "delete-group";
+        public const string CHILDREN = "get-children";
+        public const string PARENT = "get-parent";
+        public const string GET_BY_ID = "get-group-details-by-id";
+    }
 }

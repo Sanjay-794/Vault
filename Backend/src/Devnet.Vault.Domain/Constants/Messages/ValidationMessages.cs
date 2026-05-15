@@ -52,5 +52,14 @@ public static class ValidationMessages
         public const string INVALID_COUNTRY_CODE = "Country code is invalid";
     }
 
+    public static class GroupValidationMessages
+    {
+        public const string GROUP_NOT_FOUND = "Group not found";
+        public const string GROUP_ALREADY_EXISTS = "Group already exists";
+        public const string FAILED_GROUP_CREATION = "Failed to create group";
+        public const string GROUP_DELETE_FAILED = "Failed to delete group";
+        public const string GROUP_UPDATE_FAILED = "Failed to update group";
+    }
+
 
 }
