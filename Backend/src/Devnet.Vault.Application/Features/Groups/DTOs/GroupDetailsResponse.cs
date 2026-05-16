@@ -11,4 +11,5 @@ public class GroupDetailsResponse
     public bool IsFavourite { get; set; }
     public string MetadataJson { get; set; } = string.Empty;
     public GroupType GroupType { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

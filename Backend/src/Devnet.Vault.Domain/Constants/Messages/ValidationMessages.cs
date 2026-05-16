@@ -59,6 +59,12 @@ public static class ValidationMessages
         public const string FAILED_GROUP_CREATION = "Failed to create group";
         public const string GROUP_DELETE_FAILED = "Failed to delete group";
         public const string GROUP_UPDATE_FAILED = "Failed to update group";
+        public const string GROUP_NAME_REQUIRED = "Group name is required";
+
+        public const string INVALID_GROUP_ID = "Invalid group id";
+        public const string INVALID_GROUP_PARENT_ID = "Invalid group parent id";
+        public const string METADATA_REQUIRED = "Group metadata is required";
+        public const string INVALID_METDATA_JSON = "Group data is not in valid json format";
     }
 
 

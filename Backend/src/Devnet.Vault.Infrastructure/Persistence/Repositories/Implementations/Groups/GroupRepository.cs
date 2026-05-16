@@ -84,7 +84,7 @@ public class GroupRepository(AppDbContext _dbContext) : IGroupRepository
         return changes > 0;
     }
 
-    public async Task<bool> UpdateGroupParent(long parentGroupId, long groupId, long ownerId, long updatedBy)
+    public async Task<bool> UpdateGroupParent(long? parentGroupId, long groupId, long ownerId, long updatedBy)
     {
         // Prevent circular reference by ensuring the new parent group is not a child of the current group
         var isCircularReference = await _dbContext.GroupDetails

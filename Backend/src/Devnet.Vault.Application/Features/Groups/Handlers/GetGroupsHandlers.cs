@@ -19,7 +19,8 @@ public class GetChildGroupsQueryHandler(IGroupRepository _groupRepository) : IRe
             OwnerId = g.OwnerId,
             IsFavourite = g.IsFavourite,
             MetadataJson = g.MetadataJson,
-            GroupType = g.GroupType
+            GroupType = g.GroupType,
+            CreatedAt = g.CreatedDate
         })];
     }
 }
@@ -39,7 +40,8 @@ public class GetParentGroupQueryHandler(IGroupRepository _groupRepository) : IRe
             OwnerId = parent.OwnerId,
             IsFavourite = parent.IsFavourite,
             MetadataJson = parent.MetadataJson,
-            GroupType = parent.GroupType
+            GroupType = parent.GroupType,
+            CreatedAt = parent.CreatedDate
         };
     }
 }
@@ -59,7 +61,8 @@ public class GetGroupByIdQueryHandler(IGroupRepository _groupRepository) : IRequ
             OwnerId = group.OwnerId,
             IsFavourite = group.IsFavourite,
             MetadataJson = group.MetadataJson,
-            GroupType = group.GroupType
+            GroupType = group.GroupType,
+            CreatedAt = group.CreatedDate
         };
     }
 }

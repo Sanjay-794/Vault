@@ -1,5 +1,6 @@
 ﻿using PhoneNumbers;
 using System.Net.Mail;
+using System.Text.Json;
 
 namespace Devnet.Vault.Application.Utilities;
 
@@ -28,6 +29,20 @@ public static class Validators
             var parsed = phoneUtil.Parse(phone, null);
 
             return phoneUtil.IsValidNumber(parsed);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public static bool IsValidJson(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return false;
+        try
+        {
+            JsonDocument.Parse(json);
+            return true;
         }
         catch
         {

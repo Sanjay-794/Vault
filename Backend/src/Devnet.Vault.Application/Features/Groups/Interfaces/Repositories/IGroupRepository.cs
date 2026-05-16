@@ -10,7 +10,7 @@ public interface IGroupRepository
     Task<GroupDetails?> ReuseDeletedGroupName(GroupDetails group);
     Task<bool> UpdateGroupName(string groupName, long groupId, long ownerId, long updatedBy);
     Task<bool> UpdateGroupFavouriteStatus(bool isFavourite, long groupId, long ownerId, long updatedBy);
-    Task<bool> UpdateGroupParent(long parentGroupId, long groupId, long ownerId, long updatedBy);
+    Task<bool> UpdateGroupParent(long? parentGroupId, long groupId, long ownerId, long updatedBy);
     Task<bool> UpdateGroupMetadata(long groupId, string metadataJson, long ownerId, long updatedBy);
     Task<bool> DeleteGroup(long groupId, long ownerId, long updatedBy);
     Task<List<GroupDetails>> GetChildGroupDetails(long ownerId, long? parentGroupId, GroupType groupType);

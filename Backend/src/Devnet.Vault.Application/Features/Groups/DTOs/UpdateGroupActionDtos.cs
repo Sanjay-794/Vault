@@ -16,7 +16,7 @@ public class UpdateGroupFavouriteRequest
 public class UpdateGroupParentRequest
 {
     public long GroupId { get; set; }
-    public long ParentGroupId { get; set; }
+    public long? ParentGroupId { get; set; }
 }
 public class UpdateGroupMetaDataJsonRequest
 {
