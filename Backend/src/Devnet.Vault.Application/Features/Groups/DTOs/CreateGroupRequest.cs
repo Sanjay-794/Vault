@@ -10,3 +10,8 @@ public class CreateGroupRequest
     public string? MetadataJson { get; set; }
     public GroupType GroupType { get; set; }
 }
+
+public class CreateGroupResponse
+{
+    public long GroupId { get; set; }
+}

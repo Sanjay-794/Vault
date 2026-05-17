@@ -11,6 +11,12 @@ public class CreateGroupCommandValidator : AbstractValidator<CreateGroupCommand>
         RuleFor(x => x.Request.Name)
             .NotEmpty()
             .WithMessage(ValidationMessages.GroupValidationMessages.GROUP_NAME_REQUIRED);
+
+        RuleFor(x => x.Request.MetadataJson)
+       .Must(Validators.IsValidJson)
+       .WithMessage(ValidationMessages.GroupValidationMessages.INVALID_METDATA_JSON)
+       .When(x => !string.IsNullOrWhiteSpace(x.Request.MetadataJson));
+
     }
 }
 

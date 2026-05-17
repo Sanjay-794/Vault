@@ -1,4 +1,5 @@
 using Devnet.Vault.Application.Features.Groups.Commands;
+using Devnet.Vault.Application.Features.Groups.DTOs;
 using Devnet.Vault.Application.Features.Groups.Interfaces.Repositories;
 using Devnet.Vault.Domain.Entities.Groups;
 using MediatR;
@@ -6,9 +7,9 @@ using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Application.Features.Groups.Handlers;
 
-public class CreateGroupCommandHandler(IGroupRepository _groupRepository) : IRequestHandler<CreateGroupCommand, long>
+public class CreateGroupCommandHandler(IGroupRepository _groupRepository) : IRequestHandler<CreateGroupCommand, CreateGroupResponse>
 {
-    public async Task<long> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
+    public async Task<CreateGroupResponse> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
         var userId = request.UserId;
@@ -30,15 +31,19 @@ public class CreateGroupCommandHandler(IGroupRepository _groupRepository) : IReq
             CreatedBy = userId,
             CreatedDate = DateTime.UtcNow
         };
-
+        CreateGroupResponse createGroupResponse = new();
         var reused = await _groupRepository.ReuseDeletedGroupName(candidate);
         if (reused != null)
-            return reused.GroupId;
+        {
+            createGroupResponse.GroupId = reused.GroupId;
+            return createGroupResponse;
+        }
+
 
         var ok = await _groupRepository.CreateNewGroup(candidate);
         if (!ok)
             throw new InvalidOperationException(GroupValidationMessages.FAILED_GROUP_CREATION);
-
-        return candidate.GroupId;
+        createGroupResponse.GroupId = candidate.GroupId;
+        return createGroupResponse;
     }
 }

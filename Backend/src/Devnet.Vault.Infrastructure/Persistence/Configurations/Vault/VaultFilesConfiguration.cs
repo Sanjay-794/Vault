@@ -21,7 +21,7 @@ internal class VaultFilesConfiguration : IEntityTypeConfiguration<VaultFiles>
 
         builder.Property(x => x.FileKey)
             .IsRequired()
-            .HasMaxLength(1000);
+            .HasMaxLength(500);
 
         builder.Property(x => x.ContentType)
             .IsRequired()

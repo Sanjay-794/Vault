@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Devnet.Vault.Application.Features.Groups.Commands;
 
-public record CreateGroupCommand(CreateGroupRequest Request, long UserId) : IRequest<long>;
+public record CreateGroupCommand(CreateGroupRequest Request, long UserId) : IRequest<CreateGroupResponse>;
 public record UpdateGroupNameCommand(UpdateGroupNameRequest Request, long GroupOwnerId, long UserId) : IRequest<bool>;
 public record UpdateGroupFavouriteCommand(UpdateGroupFavouriteRequest Request, long GroupOwnerId, long UserId) : IRequest<bool>;
 public record UpdateGroupParentCommand(UpdateGroupParentRequest Request, long GroupOwnerId, long UserId) : IRequest<bool>;

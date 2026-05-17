@@ -54,7 +54,7 @@ public static class ValidationMessages
 
     public static class GroupValidationMessages
     {
-        public const string GROUP_NOT_FOUND = "Group not found";
+        public const string GROUP_NOT_FOUND = "Group details not found";
         public const string GROUP_ALREADY_EXISTS = "Group already exists";
         public const string FAILED_GROUP_CREATION = "Failed to create group";
         public const string GROUP_DELETE_FAILED = "Failed to delete group";
@@ -65,6 +65,9 @@ public static class ValidationMessages
         public const string INVALID_GROUP_PARENT_ID = "Invalid group parent id";
         public const string METADATA_REQUIRED = "Group metadata is required";
         public const string INVALID_METDATA_JSON = "Group data is not in valid json format";
+        public const string PARENT_ITSELF_OR_NOT_FOUND = "No parent found for given group id";
+        public const string DRAG_ALLOWED_AT_SAME_LEVEL = "New parent group must belong to same level";
+        public const string DELETE_NOT_ALLOWED = "Group has items inside it. Group deletion failed";
     }
 
 

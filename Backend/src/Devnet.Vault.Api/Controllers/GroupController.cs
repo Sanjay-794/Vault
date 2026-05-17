@@ -84,6 +84,22 @@ public class GroupController(IMediator _mediator) : ControllerBase
         return BadRequest(new { message = GroupValidationMessages.GROUP_UPDATE_FAILED });
     }
 
+
+    [HttpPatch(ApiEndpoints.GroupApiEndpoints.UPDATE_METADATA)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(StatusCodes.Status499ClientClosedRequest)]
+    public async Task<IActionResult> UpdateGroupMetaData([FromBody] UpdateGroupMetaDataJsonRequest request, CancellationToken cancellationToken)
+    {
+        var userId = HttpContext.GetUserId();
+        if (userId <= 0) return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
+
+        var result = await _mediator.Send(new UpdateGroupMetaDataJsonCommand(request, userId, userId), cancellationToken);
+        if (result) return Ok(result);
+        return BadRequest(new { message = GroupValidationMessages.GROUP_UPDATE_FAILED });
+    }
+
     [HttpDelete(ApiEndpoints.GroupApiEndpoints.DELETE_GROUP)]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -124,7 +140,7 @@ public class GroupController(IMediator _mediator) : ControllerBase
         if (userId <= 0) return Unauthorized(new { message = UserInfoMessages.REQUEST_USER_ID_INVALID });
 
         var item = await _mediator.Send(new GetParentGroupQuery(userId, groupId), cancellationToken);
-        if (item == null) return NotFound();
+        if (item == null) return NotFound(new { message = GroupValidationMessages.PARENT_ITSELF_OR_NOT_FOUND });
         return Ok(item);
     }
 
@@ -136,7 +152,7 @@ public class GroupController(IMediator _mediator) : ControllerBase
     public async Task<IActionResult> GetById(long groupId, CancellationToken cancellationToken)
     {
         var item = await _mediator.Send(new GetGroupByIdQuery(groupId), cancellationToken);
-        if (item == null) return NotFound();
+        if (item == null) return NotFound(new { message = GroupValidationMessages.GROUP_NOT_FOUND });
         return Ok(item);
     }
 }

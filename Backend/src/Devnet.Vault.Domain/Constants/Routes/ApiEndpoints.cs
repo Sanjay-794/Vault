@@ -37,6 +37,7 @@ public static class ApiEndpoints
         public const string UPDATE_NAME = "update-name";
         public const string UPDATE_FAVOURITE = "update-favourite";
         public const string UPDATE_PARENT = "update-parent";
+        public const string UPDATE_METADATA = "update-metadatajson";
         public const string DELETE_GROUP = "delete-group";
         public const string CHILDREN = "get-children";
         public const string PARENT = "get-parent";

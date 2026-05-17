@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Devnet.Vault.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260512060352_UpdatedColumn")]
-    partial class UpdatedColumn
+    [Migration("20260518045631_DbCreate")]
+    partial class DbCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,72 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Groups.GroupDetails", b =>
+                {
+                    b.Property<long>("GroupId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("GroupId"));
+
+                    b.Property<long?>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("DeletedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("GroupType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsFavourite")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MetadataJson")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ParentGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("GroupId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("ParentGroupId");
+
+                    b.HasIndex("OwnerId", "ParentGroupId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("GroupDetails", (string)null);
+                });
 
             modelBuilder.Entity("Devnet.Vault.Domain.Entities.Identity.RoleFeatures", b =>
                 {
@@ -353,6 +419,173 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Vault.VaultEntries", b =>
+                {
+                    b.Property<long>("VaultEntryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("VaultEntryId"));
+
+                    b.Property<long?>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("DeletedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("EncryptedData")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("EntryType")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("GroupDetailsGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("GroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsFavourite")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("VaultEntryId");
+
+                    b.HasIndex("EntryType");
+
+                    b.HasIndex("GroupDetailsGroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("OwnerId", "GroupId", "Title")
+                        .IsUnique();
+
+                    b.ToTable("VaultEntries", (string)null);
+                });
+
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Vault.VaultFiles", b =>
+                {
+                    b.Property<long>("VaultFileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("VaultFileId"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long?>("CreatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("DeletedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Extension")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("FileKey")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("GroupDetailsGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("GroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsFavourite")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("MetadataJson")
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UpdatedBy")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("VaultFileId");
+
+                    b.HasIndex("FileKey")
+                        .IsUnique();
+
+                    b.HasIndex("GroupDetailsGroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("VaultFiles", (string)null);
+                });
+
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Groups.GroupDetails", b =>
+                {
+                    b.HasOne("Devnet.Vault.Domain.Entities.Groups.GroupDetails", "ParentGroup")
+                        .WithMany("ChildGroups")
+                        .HasForeignKey("ParentGroupId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ParentGroup");
+                });
+
             modelBuilder.Entity("Devnet.Vault.Domain.Entities.Identity.RoleFeatures", b =>
                 {
                     b.HasOne("Devnet.Vault.Domain.Entities.Masters.Features", "Feature")
@@ -408,6 +641,59 @@ namespace Devnet.Vault.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParentFeature");
+                });
+
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Vault.VaultEntries", b =>
+                {
+                    b.HasOne("Devnet.Vault.Domain.Entities.Groups.GroupDetails", null)
+                        .WithMany("VaultEntries")
+                        .HasForeignKey("GroupDetailsGroupId");
+
+                    b.HasOne("Devnet.Vault.Domain.Entities.Groups.GroupDetails", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Devnet.Vault.Domain.Entities.Identity.UserDetails", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Vault.VaultFiles", b =>
+                {
+                    b.HasOne("Devnet.Vault.Domain.Entities.Groups.GroupDetails", null)
+                        .WithMany("VaultFiles")
+                        .HasForeignKey("GroupDetailsGroupId");
+
+                    b.HasOne("Devnet.Vault.Domain.Entities.Groups.GroupDetails", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Devnet.Vault.Domain.Entities.Identity.UserDetails", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Devnet.Vault.Domain.Entities.Groups.GroupDetails", b =>
+                {
+                    b.Navigation("ChildGroups");
+
+                    b.Navigation("VaultEntries");
+
+                    b.Navigation("VaultFiles");
                 });
 
             modelBuilder.Entity("Devnet.Vault.Domain.Entities.Masters.Features", b =>

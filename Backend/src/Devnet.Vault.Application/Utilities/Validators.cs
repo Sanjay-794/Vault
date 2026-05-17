@@ -36,7 +36,7 @@ public static class Validators
         }
     }
 
-    public static bool IsValidJson(string json)
+    public static bool IsValidJson(string? json)
     {
         if (string.IsNullOrEmpty(json)) return false;
         try

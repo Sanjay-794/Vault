@@ -3,6 +3,7 @@ using Devnet.Vault.Domain.Entities.Groups;
 using Devnet.Vault.Domain.Enums;
 using Devnet.Vault.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Groups;
 
@@ -52,6 +53,8 @@ public class GroupRepository(AppDbContext _dbContext) : IGroupRepository
             existingGroup.GroupType = group.GroupType;
 
             existingGroup.IsDeleted = false;
+            existingGroup.DeletedBy = null;
+            existingGroup.DeletedDate = null;
             existingGroup.UpdatedDate = DateTime.UtcNow;
             existingGroup.UpdatedBy = group.CreatedBy;
 
@@ -86,18 +89,39 @@ public class GroupRepository(AppDbContext _dbContext) : IGroupRepository
 
     public async Task<bool> UpdateGroupParent(long? parentGroupId, long groupId, long ownerId, long updatedBy)
     {
-        // Prevent circular reference by ensuring the new parent group is not a child of the current group
-        var isCircularReference = await _dbContext.GroupDetails
-            .Where(g => g.GroupId == parentGroupId && g.OwnerId == ownerId && !g.IsDeleted)
-            .SelectMany(g => g.ChildGroups)
-            .AnyAsync(cg => cg.GroupId == groupId);
-        if (isCircularReference)
+        // Cannot move inside itself
+        if (parentGroupId == groupId)
             return false;
-        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted)
-               .ExecuteUpdateAsync(X => X.SetProperty(g => g.ParentGroupId, parentGroupId)
-               .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
-               .SetProperty(g => g.UpdatedBy, updatedBy)
-               );
+
+        // Current group info
+        var currentGroup = await _dbContext.GroupDetails
+            .Where(g => g.GroupId == groupId
+                        && g.OwnerId == ownerId
+                        && !g.IsDeleted)
+            .Select(g => new
+            {
+                g.GroupId,
+                g.ParentGroupId
+            })
+            .FirstOrDefaultAsync() ?? throw new InvalidOperationException(GroupValidationMessages.GROUP_NOT_FOUND);
+
+        // New parent must belong to same level
+        var isSameLevel = await _dbContext.GroupDetails
+            .AnyAsync(g => g.GroupId == parentGroupId
+                        && g.OwnerId == ownerId
+                        && !g.IsDeleted
+                        && g.ParentGroupId == currentGroup.ParentGroupId);
+
+        if (!isSameLevel)
+            throw new InvalidOperationException(GroupValidationMessages.DRAG_ALLOWED_AT_SAME_LEVEL);
+
+        var changes = await _dbContext.GroupDetails
+            .Where(g => g.GroupId == groupId)
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(g => g.ParentGroupId, parentGroupId)
+                .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
+                .SetProperty(g => g.UpdatedBy, updatedBy));
+
         return changes > 0;
     }
 
@@ -114,12 +138,39 @@ public class GroupRepository(AppDbContext _dbContext) : IGroupRepository
     public async Task<bool> DeleteGroup(long groupId, long ownerId, long updatedBy)
     {
         // Only allow deletion if there are no vault items or child groups inside this group
-        var changes = await _dbContext.GroupDetails.Where(g => g.GroupId == groupId && g.OwnerId == ownerId && !g.IsDeleted
-        && g.VaultEntries.Any() == false && g.VaultFiles.Any() == false && g.ChildGroups.Any() == false)
-               .ExecuteUpdateAsync(X => X.SetProperty(g => g.IsDeleted, true)
-               .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
-               .SetProperty(g => g.UpdatedBy, updatedBy)
-               );
+        var canDelete = await _dbContext.GroupDetails
+            .Where(g => g.GroupId == groupId
+                        && g.OwnerId == ownerId
+                        && !g.IsDeleted)
+            .Select(g => new
+            {
+                HasChildGroups = _dbContext.GroupDetails
+                    .Any(c => c.ParentGroupId == groupId && !c.IsDeleted),
+
+                HasVaultEntries = _dbContext.VaultEntries
+                    .Any(v => v.GroupId == groupId && !v.IsDeleted),
+
+                HasVaultFiles = _dbContext.VaultFiles
+                    .Any(v => v.GroupId == groupId && !v.IsDeleted)
+            })
+            .FirstOrDefaultAsync() ?? throw new InvalidOperationException(GroupValidationMessages.GROUP_NOT_FOUND);
+
+        if (canDelete.HasChildGroups ||
+            canDelete.HasVaultEntries ||
+            canDelete.HasVaultFiles)
+            throw new InvalidOperationException(GroupValidationMessages.DELETE_NOT_ALLOWED);
+
+        var changes = await _dbContext.GroupDetails
+            .Where(g => g.GroupId == groupId
+                        && g.OwnerId == ownerId
+                        && !g.IsDeleted)
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(g => g.IsDeleted, true)
+                .SetProperty(g => g.UpdatedDate, DateTime.UtcNow)
+                .SetProperty(g => g.UpdatedBy, updatedBy)
+                .SetProperty(g => g.DeletedDate, DateTime.UtcNow)
+                .SetProperty(g => g.DeletedBy, updatedBy));
+
         return changes > 0;
     }
 
