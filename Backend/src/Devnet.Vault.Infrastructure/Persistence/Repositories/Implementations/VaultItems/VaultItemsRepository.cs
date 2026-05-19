@@ -1,5 +1,7 @@
-﻿namespace Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.VaultItems;
+﻿using Devnet.Vault.Infrastructure.Persistence.Context;
 
-public class VaultItemsRepository
+namespace Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.VaultItems;
+
+public class VaultItemsRepository(AppDbContext _context)
 {
 }
