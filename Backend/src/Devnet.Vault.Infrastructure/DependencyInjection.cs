@@ -3,9 +3,11 @@ using Devnet.Vault.Application.Configurations;
 using Devnet.Vault.Application.Features.Account.Interfaces.Repositories;
 using Devnet.Vault.Application.Features.Auth.Interfaces.Repositories;
 using Devnet.Vault.Application.Features.Auth.Interfaces.Services;
+using Devnet.Vault.Application.Features.Groups.Interfaces.Repositories;
 using Devnet.Vault.Application.Features.Shared.Cache.Interfaces.Services;
 using Devnet.Vault.Application.Features.Shared.FileUpload.Interfaces;
 using Devnet.Vault.Application.Features.Shared.Otp.Interfaces.Services;
+using Devnet.Vault.Application.Features.VaultItems.Interfaces;
 using Devnet.Vault.Application.Notifications.Email.Interfaces;
 using Devnet.Vault.Application.Security.Encryption.Interfaces;
 using Devnet.Vault.Domain.Constants.AppKeys;
@@ -17,8 +19,9 @@ using Devnet.Vault.Infrastructure.Notifications.Email.Workers;
 using Devnet.Vault.Infrastructure.Otp.Services;
 using Devnet.Vault.Infrastructure.Persistence.Context;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Account;
-using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Groups;
 using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Authentication;
+using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.Groups;
+using Devnet.Vault.Infrastructure.Persistence.Repositories.Implementations.VaultItems;
 using Devnet.Vault.Infrastructure.Security;
 using Devnet.Vault.Infrastructure.Storage.CloudFareR2.Queue;
 using Devnet.Vault.Infrastructure.Storage.CloudFareR2.Services;
@@ -97,7 +100,8 @@ public static class DependencyInjection
         // Register Auth and Account Repositories
         _services.AddScoped<IAuthRepository, AuthRepository>();
         _services.AddScoped<IUserRepository, UserRepository>();
-        _services.AddScoped<Devnet.Vault.Application.Features.Groups.Interfaces.Repositories.IGroupRepository, GroupRepository>();
+        _services.AddScoped<IGroupRepository, GroupRepository>();
+        _services.AddScoped<IVaultItemsRepository, VaultItemsRepository>();
 
         return _services;
     }

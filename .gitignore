@@ -1,3 +1,5 @@
+####################   API .gitignore  ####################
+
 # Build
 bin/
 obj/
@@ -61,3 +63,9 @@ coverage/
 # Resharper
 _ReSharper*/
 *.DotSettings.user
+
+####################   MOBILE .gitignore  ####################
+
+
+
+####################   WEB .gitignore  ####################
