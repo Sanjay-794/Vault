@@ -66,8 +66,19 @@ public static class ValidationMessages
         public const string METADATA_REQUIRED = "Group metadata is required";
         public const string INVALID_METDATA_JSON = "Group data is not in valid json format";
         public const string PARENT_ITSELF_OR_NOT_FOUND = "No parent found for given group id";
-        public const string DRAG_ALLOWED_AT_SAME_LEVEL = "New parent group must belong to same level";
+        public const string DRAG_NOT_ALLOWED = "Group cannot be moved to this level";
         public const string DELETE_NOT_ALLOWED = "Group has items inside it. Group deletion failed";
+    }
+
+    public static class VaultEntryValidationMessages
+    {
+        public const string ENTRY_NOT_FOUND = "Item not found";
+        public const string ENTRY_ALREADY_EXISTS = "Item already exists at same level";
+        public const string FAILED_ENTRY_CREATION = "Failed to create Item";
+        public const string ENTRY_DELETE_FAILED = "Failed to delete Item";
+        public const string ENTRY_UPDATE_FAILED = "Failed to update Item";
+        public const string ENTRY_TITLE_REQUIRED = "Item title is required";
+        public const string INVALID_ENTRY_ID = "Invalid Item id";
     }
 
 

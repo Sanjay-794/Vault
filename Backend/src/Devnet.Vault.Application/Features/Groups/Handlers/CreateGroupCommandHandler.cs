@@ -15,7 +15,7 @@ public class CreateGroupCommandHandler(IGroupRepository _groupRepository) : IReq
         var userId = request.UserId;
 
         // If group exists and not deleted -> fail
-        var exists = await _groupRepository.DoesGroupExist(req.Name, userId, req.ParentGroupId);
+        var exists = await _groupRepository.DoesGroupExist(req.Name, userId, req.ParentGroupId, cancellationToken);
         if (exists)
             throw new InvalidOperationException(GroupValidationMessages.GROUP_ALREADY_EXISTS);
 
@@ -32,7 +32,7 @@ public class CreateGroupCommandHandler(IGroupRepository _groupRepository) : IReq
             CreatedDate = DateTime.UtcNow
         };
         CreateGroupResponse createGroupResponse = new();
-        var reused = await _groupRepository.ReuseDeletedGroupName(candidate);
+        var reused = await _groupRepository.ReuseDeletedGroupName(candidate, cancellationToken);
         if (reused != null)
         {
             createGroupResponse.GroupId = reused.GroupId;
@@ -40,7 +40,7 @@ public class CreateGroupCommandHandler(IGroupRepository _groupRepository) : IReq
         }
 
 
-        var ok = await _groupRepository.CreateNewGroup(candidate);
+        var ok = await _groupRepository.CreateNewGroup(candidate, cancellationToken);
         if (!ok)
             throw new InvalidOperationException(GroupValidationMessages.FAILED_GROUP_CREATION);
         createGroupResponse.GroupId = candidate.GroupId;

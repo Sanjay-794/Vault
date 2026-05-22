@@ -9,7 +9,7 @@ public class UpdateGroupNameCommandHandler(IGroupRepository _groupRepository) : 
     public async Task<bool> Handle(UpdateGroupNameCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
-        return await _groupRepository.UpdateGroupName(req.Name, req.GroupId, request.GroupOwnerId, request.UserId);
+        return await _groupRepository.UpdateGroupName(req.Name, req.GroupId, request.GroupOwnerId, request.UserId, cancellationToken);
     }
 }
 
@@ -18,7 +18,7 @@ public class UpdateGroupFavouriteCommandHandler(IGroupRepository _groupRepositor
     public async Task<bool> Handle(UpdateGroupFavouriteCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
-        return await _groupRepository.UpdateGroupFavouriteStatus(req.IsFavourite, req.GroupId, request.GroupOwnerId, request.UserId);
+        return await _groupRepository.UpdateGroupFavouriteStatus(req.IsFavourite, req.GroupId, request.GroupOwnerId, request.UserId, cancellationToken);
     }
 }
 
@@ -27,7 +27,7 @@ public class UpdateGroupParentCommandHandler(IGroupRepository _groupRepository) 
     public async Task<bool> Handle(UpdateGroupParentCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
-        return await _groupRepository.UpdateGroupParent(req.ParentGroupId, req.GroupId, request.GroupOwnerId, request.UserId);
+        return await _groupRepository.UpdateGroupParent(req.ParentGroupId, req.GroupType, req.GroupId, request.GroupOwnerId, request.UserId, cancellationToken);
     }
 }
 
@@ -36,7 +36,7 @@ public class UpdateGroupMetaDataJsonCommandHandler(IGroupRepository _groupReposi
     public async Task<bool> Handle(UpdateGroupMetaDataJsonCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
-        return await _groupRepository.UpdateGroupMetadata(req.GroupId, req.MetadataJson, request.GroupOwnerId, request.UserId);
+        return await _groupRepository.UpdateGroupMetadata(req.GroupId, req.MetadataJson, request.GroupOwnerId, request.UserId, cancellationToken);
     }
 }
 
@@ -45,6 +45,6 @@ public class DeleteGroupCommandHandler(IGroupRepository _groupRepository) : IReq
     public async Task<bool> Handle(DeleteGroupCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
-        return await _groupRepository.DeleteGroup(req.GroupId, request.GroupOwnerId, request.UserId);
+        return await _groupRepository.DeleteGroup(req.GroupId, request.GroupOwnerId, request.UserId, cancellationToken);
     }
 }

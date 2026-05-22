@@ -1,3 +1,5 @@
+using Devnet.Vault.Domain.Enums;
+
 namespace Devnet.Vault.Application.Features.Groups.DTOs;
 
 
@@ -17,6 +19,7 @@ public class UpdateGroupParentRequest
 {
     public long GroupId { get; set; }
     public long? ParentGroupId { get; set; }
+    public GroupType GroupType { get; set; }
 }
 public class UpdateGroupMetaDataJsonRequest
 {

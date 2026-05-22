@@ -10,7 +10,7 @@ public class GetChildGroupsQueryHandler(IGroupRepository _groupRepository) : IRe
     // Get child groups of a parent group. If parentGroupId is null, get root level groups for the owner
     public async Task<List<GroupDetailsResponse>> Handle(GetChildGroupsQuery request, CancellationToken cancellationToken)
     {
-        var items = await _groupRepository.GetChildGroupDetails(request.OwnerId, request.ParentGroupId, request.GroupType);
+        var items = await _groupRepository.GetChildGroupDetails(request.OwnerId, request.ParentGroupId, request.GroupType, cancellationToken);
         return [.. items.Select(g => new GroupDetailsResponse
         {
             GroupId = g.GroupId,
@@ -29,7 +29,7 @@ public class GetParentGroupQueryHandler(IGroupRepository _groupRepository) : IRe
 {
     public async Task<GroupDetailsResponse?> Handle(GetParentGroupQuery request, CancellationToken cancellationToken)
     {
-        var parent = await _groupRepository.GetParentGroupDetails(request.OwnerId, request.ChildGroupId);
+        var parent = await _groupRepository.GetParentGroupDetails(request.OwnerId, request.ChildGroupId, cancellationToken);
         if (parent == null) return null;
         return new GroupDetailsResponse
         {
@@ -49,7 +49,7 @@ public class GetGroupByIdQueryHandler(IGroupRepository _groupRepository) : IRequ
 {
     public async Task<GroupDetailsResponse?> Handle(GetGroupByIdQuery request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetGroupDetailsById(request.GroupId);
+        var group = await _groupRepository.GetGroupDetailsById(request.GroupId, cancellationToken);
         if (group == null) return null;
         return new GroupDetailsResponse
         {
