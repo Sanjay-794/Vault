@@ -106,7 +106,7 @@ public class VaultItemsRepository(AppDbContext _dbContext) : IVaultItemsReposito
         return changes > 0;
     }
 
-    public async Task<bool> MoveEntryToNewGroup(long entryId, long newGroupId, GroupType groupType, long ownerId, long updatedBy, CancellationToken cancellationToken)
+    public async Task<bool> MoveEntryToNewGroup(long entryId, long? newGroupId, GroupType groupType, long ownerId, long updatedBy, CancellationToken cancellationToken)
     {
         var isExists = await _dbContext.VaultEntries
         .AnyAsync(e =>

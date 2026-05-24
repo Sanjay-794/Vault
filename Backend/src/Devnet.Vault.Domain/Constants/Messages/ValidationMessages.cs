@@ -79,6 +79,10 @@ public static class ValidationMessages
         public const string ENTRY_UPDATE_FAILED = "Failed to update Item";
         public const string ENTRY_TITLE_REQUIRED = "Item title is required";
         public const string INVALID_ENTRY_ID = "Invalid Item id";
+        public const string TITLE_REQUIRED = "Item title is required";
+        public const string DATA_REQUIRED = "Item data is required";
+        public const string INVALID_ENTRY_TYPE = "Invalid entry type";
+        public const string INVALID_VAULT_ENTRY_GROUP_ID = "Invalid group id for the item";
     }
 
 

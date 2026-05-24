@@ -11,5 +11,5 @@ public interface IVaultItemsRepository
     Task<bool> UpdateEntryTitle(string title, long entryId, long ownerId, long updatedBy, CancellationToken cancellationToken);
     Task<bool> UpdateEncryptedData(string encryptedData, long entryId, long ownerId, long updatedBy, CancellationToken cancellationToken);
     Task<bool> DeleteEntry(long entryId, long ownerId, long deletedBy, CancellationToken cancellationToken);
-    Task<bool> MoveEntryToNewGroup(long entryId, long newGroupId, GroupType groupType, long ownerId, long updatedBy, CancellationToken cancellationToken);
+    Task<bool> MoveEntryToNewGroup(long entryId, long? newGroupId, GroupType groupType, long ownerId, long updatedBy, CancellationToken cancellationToken);
 }
