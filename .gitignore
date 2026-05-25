@@ -30,6 +30,7 @@ yarn-error.log*
 
 # Config
 appsettings.Local.json
+appsettings.Development.json
 secrets.json
 
 # Frontend
@@ -68,4 +69,4 @@ _ReSharper*/
 
 
 
-####################   WEB .gitignore  ####################
+####################    WEB .gitignore ####################
