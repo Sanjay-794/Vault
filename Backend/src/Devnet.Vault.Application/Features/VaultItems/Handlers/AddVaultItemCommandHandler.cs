@@ -1,5 +1,7 @@
-﻿using Devnet.Vault.Application.Features.VaultItems.DTOs;
+﻿using Devnet.Vault.Application.Features.Account.Interfaces.Repositories;
+using Devnet.Vault.Application.Features.VaultItems.DTOs;
 using Devnet.Vault.Application.Features.VaultItems.Interfaces;
+using Devnet.Vault.Application.Security.Encryption.Interfaces;
 using Devnet.Vault.Domain.Entities.Vault;
 using MediatR;
 using static Devnet.Vault.Application.Features.VaultItems.Commands.VaultItemsCommands;
@@ -7,19 +9,23 @@ using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Application.Features.VaultItems.Handlers;
 
-public class AddVaultItemCommandHandler(IVaultItemsRepository _vaultItemsRepository)
-    : IRequestHandler<AddNewVaultItemCommand, AddVaultItemResponse>
+public class AddVaultItemCommandHandler(IVaultItemsRepository _vaultItemsRepository, IUserRepository _userRepository,
+    IEncryptionService _encryptionService) : IRequestHandler<AddNewVaultItemCommand, AddVaultItemResponse>
 {
     public async Task<AddVaultItemResponse> Handle(AddNewVaultItemCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
         var userId = request.OwnerId;
+        var userSecretKey = await _userRepository.GetUserSpecificEncryptionKeyAsync(userId, cancellationToken)
+            ?? throw new InvalidOperationException(UserInfoMessages.USER_INFO_RETRIEVAL_FAILED);
+
+        var encryptedData = _encryptionService.EncryptWithUserKey(req.Data, userSecretKey);
 
         var candidate = new VaultEntries
         {
             Title = req.Title,
             EntryType = req.EntryType,
-            EncryptedData = req.Data,
+            EncryptedData = encryptedData,
             OwnerId = userId,
             GroupId = req.GroupId,
             IsFavourite = req.IsFavourite,

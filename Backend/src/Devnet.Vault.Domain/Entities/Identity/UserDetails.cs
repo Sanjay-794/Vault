@@ -16,7 +16,7 @@ public class UserDetails : AuditProperty
     public bool IsDeactivated { get; set; }
     public DateTime? DeactivatedAt { get; set; }
     public long? DeactivatedBy { get; set; }
-
+    public string UserSecretKey { get; set; } = null!;
     public Countries? Country { get; set; }
     public Roles? Role { get; set; }
 }

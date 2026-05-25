@@ -11,15 +11,17 @@ using Devnet.Vault.Domain.Entities.Identity;
 using Devnet.Vault.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Options;
+using System.Text;
 using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Application.Features.Auth.Handlers;
 
 public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationService, IUserRepository _userRepository, IAuthRepository _authRepository,
     IJwtService _jwtService, IEncryptionService _encryptionService,
-    IOptions<JwtSettings> _jwtSettings) : IRequestHandler<RegisterOrLoginCommand, AuthResponse>
+    IOptions<JwtSettings> _jwtSettings, IOptions<EncryptionSettings> _encryptionSettings) : IRequestHandler<RegisterOrLoginCommand, AuthResponse>
 {
     private readonly JwtSettings _settings = _jwtSettings.Value;
+    private readonly EncryptionSettings _encryptionSettings = _encryptionSettings.Value;
 
     public async Task<AuthResponse> Handle(RegisterOrLoginCommand request, CancellationToken cancellationToken)
     {
@@ -59,6 +61,7 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
                 PhoneNumber = isSMS ? req.Identifier : null,
                 CountryId = req.CountryId.HasValue ? req.CountryId.Value : null,
                 IsDeactivated = false,
+                UserSecretKey = GenerateUserSecretKey(req.Otp),
                 CreatedBy = 0, // System user
                 CreatedDate = DateTime.UtcNow
             };
@@ -108,5 +111,17 @@ public class RegisterOrLoginCommandHandler(IOtpValidationService _otpValidationS
             IsNewUser = isNewUser,
             ExpiryMinutes = _settings.ExpiryMinutes
         };
+    }
+
+    private string GenerateUserSecretKey(string userOtp)
+    {
+        StringBuilder stringBuilder = new();
+
+        var appKey = _encryptionSettings.AppKey.Replace("=", ""); // Remove padding characters
+
+        stringBuilder.Append(appKey);
+        stringBuilder.Append(userOtp);
+        stringBuilder.Append(DateTime.UtcNow.Ticks);
+        return _encryptionService.Encrypt(stringBuilder.ToString());
     }
 }

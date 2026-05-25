@@ -38,7 +38,7 @@ public static class ValidationMessages
     {
         public const string USER_NOT_FOUND = "User not found";
         public const string REQUEST_USER_ID_INVALID = "Invalid user ID in token";
-
+        public const string USER_INFO_RETRIEVAL_FAILED = "Failed to retrieve user information";
 
     }
 

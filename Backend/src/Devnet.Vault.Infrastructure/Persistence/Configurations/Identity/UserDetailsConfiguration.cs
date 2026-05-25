@@ -36,6 +36,10 @@ public class UserDetailsConfiguration : IEntityTypeConfiguration<UserDetails>
 
         builder.Property(x => x.DeactivatedAt);
 
+        builder.Property(x => x.UserSecretKey)
+            .IsRequired()
+            .HasMaxLength(500);
+
         // Indexes 
         builder.HasIndex(u => new { u.Email, u.IsDeleted })
         .IsUnique();

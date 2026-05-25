@@ -26,6 +26,71 @@ public class EncryptionService(IOptions<EncryptionSettings> options) : IEncrypti
         return CustomDecode(decrypted);
     }
 
+    public string EncryptWithUserKey(string plainText, string userKey)
+    {
+        var key = DeriveKey(userKey);
+
+        using var aes = Aes.Create();
+        aes.Key = key;
+        aes.GenerateIV();
+
+        using var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+        var plainBytes = Encoding.UTF8.GetBytes(plainText);
+
+        using var ms = new MemoryStream();
+
+        // store IV at beginning
+        ms.Write(aes.IV, 0, aes.IV.Length);
+
+        using (var cryptoStream = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+        {
+            cryptoStream.Write(plainBytes, 0, plainBytes.Length);
+            cryptoStream.FlushFinalBlock();
+        }
+
+        // first encryption output
+        var userEncrypted = Convert.ToBase64String(ms.ToArray());
+
+        // second encryption using existing method
+        return Encrypt(userEncrypted);
+    }
+
+    public string DecryptWithUserKey(string encryptedText, string userKey)
+    {
+        // reverse outer encryption first
+        var userEncrypted = Decrypt(encryptedText);
+
+        var fullCipher = Convert.FromBase64String(userEncrypted);
+
+        var key = DeriveKey(userKey);
+
+        using var aes = Aes.Create();
+        aes.Key = key;
+
+        var ivLength = aes.BlockSize / 8;
+
+        var iv = new byte[ivLength];
+        var cipherBytes = new byte[fullCipher.Length - ivLength];
+
+        Buffer.BlockCopy(fullCipher, 0, iv, 0, ivLength);
+        Buffer.BlockCopy(fullCipher, ivLength, cipherBytes, 0, cipherBytes.Length);
+
+        aes.IV = iv;
+
+        using var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+        using var ms = new MemoryStream(cipherBytes);
+        using var cryptoStream = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
+        using var reader = new StreamReader(cryptoStream, Encoding.UTF8);
+
+        return reader.ReadToEnd();
+    }
+
+    private static byte[] DeriveKey(string userKey)
+    {
+        return SHA256.HashData(Encoding.UTF8.GetBytes(userKey));
+    }
+
     private byte[] EncryptAes(string input)
     {
         using var aes = CreateAes();

@@ -14,6 +14,14 @@ public class UserRepository(AppDbContext _dbContext) : IUserRepository
             .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted, cancellationToken);
     }
 
+    public async Task<string?> GetUserSpecificEncryptionKeyAsync(long userId, CancellationToken cancellationToken)
+    {
+        return await _dbContext.Users.AsNoTracking()
+            .Where(u => u.UserId == userId && !u.IsDeleted)
+            .Select(u => u.UserSecretKey)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<UserDetails?> GetUserDetailsByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken)
     {
         return await _dbContext.Users
