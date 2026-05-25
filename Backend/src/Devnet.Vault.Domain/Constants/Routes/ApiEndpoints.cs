@@ -43,4 +43,13 @@ public static class ApiEndpoints
         public const string PARENT = "get-parent";
         public const string GET_BY_ID = "get-group-details-by-id";
     }
+
+    public static class VaultItemApiEndpoints
+    {
+        public const string CREATE = "create";
+        public const string UPDATE_TITLE = "update-title";
+        public const string UPDATE_DATA = "update-data";
+        public const string UPDATE_GROUP = "update-group";
+        public const string DELETE_ITEM = "delete-item";
+    }
 }

@@ -15,9 +15,6 @@
     <Folder Include="Features\Auth\Handlers\" />
     <Folder Include="Features\Auth\DTOs\" />
     <Folder Include="Features\Auth\Queries\" />
-    <Folder Include="Features\VaultItems\Handlers\" />
-    <Folder Include="Features\VaultItems\Commands\" />
-    <Folder Include="Features\VaultItems\DTOs\" />
     <Folder Include="Features\VaultItems\Queries\" />
   </ItemGroup>
 
