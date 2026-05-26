@@ -29,9 +29,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Config
-appsettings.Local.json
-appsettings.Development.json
-secrets.json
+/Backend/src/Devnet.Vault.Api/appsettings.Local.json
+/Backend/src/Devnet.Vault.Api/appsettings.Development.json
+/Backend/src/Devnet.Vault.Api/secrets.json
 
 # Frontend
 node_modules/
