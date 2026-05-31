@@ -16,8 +16,16 @@ public class AddVaultItemCommandHandler(IVaultItemsRepository _vaultItemsReposit
     {
         var req = request.Request;
         var userId = request.OwnerId;
-        var userSecretKey = await _userRepository.GetUserSpecificEncryptionKeyAsync(userId, cancellationToken)
-            ?? throw new InvalidOperationException(UserInfoMessages.USER_INFO_RETRIEVAL_FAILED);
+        var userSecretKey = await _userRepository.GetUserSpecificEncryptionKeyAsync(userId, cancellationToken);
+        if (string.IsNullOrEmpty(userSecretKey))
+            throw new InvalidOperationException(UserInfoMessages.USER_INFO_RETRIEVAL_FAILED);
+
+        if (req.GroupId != null)
+        {
+            var isGroupValid = await _vaultItemsRepository.IsGroupValidForItems(req.GroupId ?? 0, userId, cancellationToken);
+            if (!isGroupValid)
+                throw new InvalidOperationException(VaultEntryValidationMessages.INVALID_VAULT_ENTRY_GROUP_ID);
+        }
 
         var encryptedData = _encryptionService.EncryptWithUserKey(req.Data, userSecretKey);
 
@@ -32,6 +40,7 @@ public class AddVaultItemCommandHandler(IVaultItemsRepository _vaultItemsReposit
             CreatedBy = userId,
             CreatedDate = DateTime.UtcNow
         };
+
 
         var alreadyExists = await _vaultItemsRepository.DoesEntryExists(candidate, cancellationToken);
         if (alreadyExists)

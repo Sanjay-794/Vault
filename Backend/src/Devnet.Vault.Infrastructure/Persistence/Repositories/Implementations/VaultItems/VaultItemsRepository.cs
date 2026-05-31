@@ -26,6 +26,18 @@ public class VaultItemsRepository(AppDbContext _dbContext) : IVaultItemsReposito
             && x.GroupId == vaultEntry.GroupId && x.IsDeleted == false, cancellationToken);
     }
 
+    public Task<bool> IsGroupValidForItems(long entryId, long ownerId, CancellationToken cancellationToken)
+    {
+        return _dbContext.VaultEntries.AsNoTracking()
+            .AnyAsync(x =>
+                x.VaultEntryId == entryId &&
+                x.OwnerId == ownerId &&
+                !x.IsDeleted &&
+                x.Group != null &&
+                x.Group.GroupType == GroupType.Password,
+                cancellationToken);
+    }
+
     public async Task<VaultEntries?> ReuseDeletedEntry(VaultEntries vaultEntry, CancellationToken cancellationToken)
     {
         var existingEntry = await _dbContext.VaultEntries
