@@ -1,6 +1,7 @@
 using Devnet.Vault.Application.Features.VaultItems.Interfaces;
 using MediatR;
 using static Devnet.Vault.Application.Features.VaultItems.Commands.VaultItemsCommands;
+using static Devnet.Vault.Domain.Constants.Messages.ValidationMessages;
 
 namespace Devnet.Vault.Application.Features.VaultItems.Handlers;
 
@@ -37,13 +38,20 @@ public class UpdateVaultItemDataCommandHandler(IVaultItemsRepository _vaultItems
 public class UpdateVaultItemGroupCommandHandler(IVaultItemsRepository _vaultItemsRepository)
     : IRequestHandler<UpdateVaultItemGroupCommand, bool>
 {
-    public Task<bool> Handle(UpdateVaultItemGroupCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(UpdateVaultItemGroupCommand request, CancellationToken cancellationToken)
     {
         var req = request.Request;
-        return _vaultItemsRepository.MoveEntryToNewGroup(
+
+        if (req.GroupId != null)
+        {
+            var isGroupValid = await _vaultItemsRepository.IsGroupValidForItems(req.GroupId ?? 0, request.OwnerId, cancellationToken);
+            if (!isGroupValid)
+                throw new InvalidOperationException(VaultEntryValidationMessages.INVALID_VAULT_ENTRY_GROUP_ID);
+        }
+
+        return await _vaultItemsRepository.MoveEntryToNewGroup(
             req.VaultEntryId,
             req.GroupId,
-            req.GroupType,
             request.OwnerId,
             request.OwnerId,
             cancellationToken);

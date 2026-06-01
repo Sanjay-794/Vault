@@ -26,15 +26,14 @@ public class VaultItemsRepository(AppDbContext _dbContext) : IVaultItemsReposito
             && x.GroupId == vaultEntry.GroupId && x.IsDeleted == false, cancellationToken);
     }
 
-    public Task<bool> IsGroupValidForItems(long entryId, long ownerId, CancellationToken cancellationToken)
+    public Task<bool> IsGroupValidForItems(long groupId, long ownerId, CancellationToken cancellationToken)
     {
-        return _dbContext.VaultEntries.AsNoTracking()
+        return _dbContext.GroupDetails.AsNoTracking()
             .AnyAsync(x =>
-                x.VaultEntryId == entryId &&
+                x.GroupId == groupId &&
                 x.OwnerId == ownerId &&
                 !x.IsDeleted &&
-                x.Group != null &&
-                x.Group.GroupType == GroupType.Password,
+                x.GroupType == GroupType.Password,
                 cancellationToken);
     }
 
@@ -118,9 +117,9 @@ public class VaultItemsRepository(AppDbContext _dbContext) : IVaultItemsReposito
         return changes > 0;
     }
 
-    public async Task<bool> MoveEntryToNewGroup(long entryId, long? newGroupId, GroupType groupType, long ownerId, long updatedBy, CancellationToken cancellationToken)
+    public async Task<bool> MoveEntryToNewGroup(long entryId, long? newGroupId, long ownerId, long updatedBy, CancellationToken cancellationToken)
     {
-        var isExists = await _dbContext.VaultEntries
+        var doesTitleExists = await _dbContext.VaultEntries
         .AnyAsync(e =>
             e.OwnerId == ownerId &&
             e.VaultEntryId != entryId &&
@@ -132,11 +131,10 @@ public class VaultItemsRepository(AppDbContext _dbContext) : IVaultItemsReposito
                              && !x.IsDeleted)
                     .Select(x => x.Title)
                     .FirstOrDefault() &&
-            e.GroupId == newGroupId
-            && e.Group != null && e.Group.GroupType == groupType,
+            e.GroupId == newGroupId,
             cancellationToken);
 
-        if (isExists)
+        if (doesTitleExists)
             throw new InvalidOperationException(VaultEntryValidationMessages.ENTRY_ALREADY_EXISTS);
         var changes = await _dbContext.VaultEntries.Where(e => e.VaultEntryId == entryId && e.OwnerId == ownerId && !e.IsDeleted)
                .ExecuteUpdateAsync(X => X.SetProperty(e => e.GroupId, newGroupId)

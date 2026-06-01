@@ -47,21 +47,6 @@ public class UpdateVaultItemDataCommandValidator : AbstractValidator<UpdateVault
     }
 }
 
-public class UpdateVaultItemGroupCommandValidator : AbstractValidator<UpdateVaultItemGroupCommand>
-{
-    public UpdateVaultItemGroupCommandValidator()
-    {
-        RuleFor(x => x.Request.VaultEntryId)
-            .GreaterThan(0)
-            .WithMessage(VaultEntryValidationMessages.INVALID_VAULT_ENTRY_GROUP_ID);
-
-        RuleFor(x => x.Request.GroupType)
-            .NotEmpty()
-            .IsInEnum()
-            .WithMessage(VaultEntryValidationMessages.INVALID_ENTRY_TYPE);
-    }
-}
-
 public class DeleteVaultItemCommandValidator : AbstractValidator<DeleteVaultItemCommand>
 {
     public DeleteVaultItemCommandValidator()
