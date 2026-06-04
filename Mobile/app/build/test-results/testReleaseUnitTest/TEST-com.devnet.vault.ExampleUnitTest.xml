@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.devnet.vault.ExampleUnitTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-06-04T09:41:03" hostname="LAPTOP-D5NI8P3Q" time="0.021">
-  <properties/>
-  <testcase name="addition_isCorrect" classname="com.devnet.vault.ExampleUnitTest" time="0.021"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
