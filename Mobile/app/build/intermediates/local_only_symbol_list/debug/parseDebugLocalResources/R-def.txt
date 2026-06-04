@@ -1,0 +1,27 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color btn_bg
+color btn_border
+color btn_text
+color error
+color ic_launcher_background
+color primary
+color primary_dark
+color primary_light
+color screen_bg
+color success
+color surface_bg
+color text_primary
+color text_secondary
+color vault_accent
+color white
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+mipmap ic_launcher
+mipmap ic_launcher_foreground
+mipmap ic_launcher_round
+string app_name
+style Theme.Vault
+xml backup_rules
+xml data_extraction_rules
