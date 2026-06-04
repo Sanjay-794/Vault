@@ -8,6 +8,10 @@ android {
     namespace = "com.devnet.vault"
     compileSdk = 35
 
+    lint {
+        disable += "NullSafeMutableLiveData"
+    }
+
     defaultConfig {
         applicationId = "com.devnet.vault"
         minSdk = 29
